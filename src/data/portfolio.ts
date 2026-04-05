@@ -11,7 +11,7 @@ export const profile = {
   ],
   contact: {
     phone: "+91 8884371684",
-    email: "prakharparashar@aol.com",
+    email: "prakharparashar@outlook.com",
     linkedin: "https://www.linkedin.com/in/prakharparashar",
     github: "https://github.com/parasharprakhar",
   },
