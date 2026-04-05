@@ -1,56 +1,50 @@
 import { motion } from "framer-motion";
-import { certifications, education } from "@/data/portfolio";
-import { Award, GraduationCap } from "lucide-react";
+import { certifications } from "@/data/portfolio";
+import { Award } from "lucide-react";
+
+const CAT_COLORS: Record<string, string> = {
+  "RPA & Automation": "text-cyan-400",
+  "Process Excellence": "text-amber-400",
+  "AI & Innovation": "text-purple-400",
+  "Project Management": "text-pink-400",
+  "IT Service Management": "text-emerald-400",
+  "ERP & SAP": "text-blue-400",
+};
 
 const CertificationsSection = () => {
   return (
-    <section id="certifications" className="py-24 px-6">
+    <section id="certifications" className="py-16 px-6">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-sm font-mono text-primary tracking-[0.3em] uppercase mb-12">Certifications & Education</h2>
+          <h2 className="text-sm font-mono text-primary tracking-[0.3em] uppercase mb-2">Certifications</h2>
+          <p className="text-2xl md:text-3xl font-bold text-foreground mb-8">
+            Professional Development
+            <span className="text-sm font-normal text-muted-foreground ml-3">({certifications.length} certifications)</span>
+          </p>
         </motion.div>
 
-        {/* Education */}
-        <div className="mb-12">
-          <h3 className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-            <GraduationCap className="w-4 h-4" /> Education
-          </h3>
-          <div className="grid md:grid-cols-2 gap-4">
-            {education.map((edu, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="p-4 rounded-lg border border-border bg-card"
-              >
-                <p className="font-medium text-foreground">{edu.degree}</p>
-                <p className="text-sm text-muted-foreground">{edu.school} · {edu.year}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Certifications */}
-        <h3 className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-          <Award className="w-4 h-4" /> Professional Certifications
-        </h3>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {certifications.map((cert, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.03 }}
-              className="p-4 rounded-lg border border-border bg-card hover:border-primary/30 transition-colors"
+              transition={{ delay: i * 0.05 }}
+              className="p-4 rounded-lg bg-card border border-border hover:border-primary/20 transition-colors"
             >
-              <p className="text-sm font-medium text-foreground">{cert.name}</p>
-              <p className="text-xs text-muted-foreground mt-1">{cert.issuer} · {cert.date}</p>
+              <div className="flex items-start gap-3">
+                <Award className={`w-4 h-4 flex-shrink-0 mt-0.5 ${CAT_COLORS[cert.category] || "text-primary"}`} />
+                <div>
+                  <p className="text-sm font-medium text-foreground leading-snug">{cert.name}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{cert.issuer} • {cert.date}</p>
+                  <span className={`text-[10px] ${CAT_COLORS[cert.category] || "text-primary"}`}>{cert.category}</span>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>

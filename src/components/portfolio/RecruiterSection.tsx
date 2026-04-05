@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { coreCompetencies, skillKeywords } from "@/data/portfolio";
 import { Search, Briefcase, ShieldCheck, X } from "lucide-react";
 
