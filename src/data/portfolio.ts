@@ -11,8 +11,13 @@ export const profile = {
   ],
   contact: {
     phone: "+91 8884371684",
-    linkedin: "https://linkedin.com/in/prakharparashar",
-    github: "https://github.com/prakharparashar",
+    email: "prakharparashar@outlook.com",
+    linkedin: "https://www.linkedin.com/in/prakharparashar",
+    github: "https://github.com/parasharprakhar",
+  },
+  availability: {
+    weekdays: "12:00 PM – 2:00 PM IST, 6:00 PM – 2:00 AM IST",
+    weekends: "12:00 AM – 2:00 AM IST",
   },
 };
 
@@ -80,7 +85,19 @@ export const experience = [
     company: "Capgemini",
     location: "Bengaluru",
     period: "Oct 2017 – Jan 2020",
-    highlights: [],
+    highlights: [
+      "Managed French-speaking client accounts across EMEA",
+      "Processed multilingual order management operations",
+    ],
+  },
+  {
+    role: "Language Specialist",
+    company: "Various MNCs",
+    location: "India",
+    period: "2012 – 2017",
+    highlights: [
+      "Customer support and operations in multilingual environments",
+    ],
   },
 ];
 
@@ -123,18 +140,18 @@ export const keyProjects = [
 ];
 
 export const certifications = [
-  { name: "Blue Prism Developer", issuer: "SS&C Blue Prism", date: "Oct 2025" },
-  { name: "Lean Six Sigma with AI — Green Belt", issuer: "LinkedIn", date: "Sep 2025" },
-  { name: "Build Your Own AI Agent (No Code)", issuer: "LinkedIn", date: "Mar 2026" },
-  { name: "Generative AI Tools", issuer: "Microsoft", date: "Dec 2025" },
-  { name: "Root Cause Analysis", issuer: "PMI", date: "Sep 2025" },
-  { name: "Security Risks in AI & ML", issuer: "LinkedIn", date: "May 2025" },
-  { name: "Atlassian Agile Project Management", issuer: "Atlassian", date: "Feb 2025" },
-  { name: "ServiceNow IT Leadership", issuer: "ServiceNow", date: "Dec 2024" },
-  { name: "Zendesk Customer Service", issuer: "Zendesk", date: "Dec 2024" },
-  { name: "SAP S/4HANA Essential Training", issuer: "LinkedIn", date: "Aug 2024" },
-  { name: "Intelligent Automation Foundations", issuer: "LinkedIn", date: "Apr 2024" },
-  { name: "Process Discovery for RPA", issuer: "LinkedIn", date: "Apr 2024" },
+  { name: "Blue Prism Developer", issuer: "SS&C Blue Prism", date: "Oct 2025", category: "RPA & Automation" },
+  { name: "Lean Six Sigma with AI — Green Belt", issuer: "LinkedIn", date: "Sep 2025", category: "Process Excellence" },
+  { name: "Build Your Own AI Agent (No Code)", issuer: "LinkedIn", date: "Mar 2026", category: "AI & Innovation" },
+  { name: "Generative AI Tools", issuer: "Microsoft", date: "Dec 2025", category: "AI & Innovation" },
+  { name: "Root Cause Analysis", issuer: "PMI", date: "Sep 2025", category: "Process Excellence" },
+  { name: "Security Risks in AI & ML", issuer: "LinkedIn", date: "May 2025", category: "AI & Innovation" },
+  { name: "Atlassian Agile Project Management", issuer: "Atlassian", date: "Feb 2025", category: "Project Management" },
+  { name: "ServiceNow IT Leadership", issuer: "ServiceNow", date: "Dec 2024", category: "IT Service Management" },
+  { name: "Zendesk Customer Service", issuer: "Zendesk", date: "Dec 2024", category: "IT Service Management" },
+  { name: "SAP S/4HANA Essential Training", issuer: "LinkedIn", date: "Aug 2024", category: "ERP & SAP" },
+  { name: "Intelligent Automation Foundations", issuer: "LinkedIn", date: "Apr 2024", category: "RPA & Automation" },
+  { name: "Process Discovery for RPA", issuer: "LinkedIn", date: "Apr 2024", category: "RPA & Automation" },
 ];
 
 export const awards = [
@@ -148,4 +165,34 @@ export const awards = [
 export const education = [
   { degree: "Masters of Tourism Administration", school: "Banaras Hindu University", year: "2012" },
   { degree: "Bachelor of Science", school: "Veer Bahadur Singh Purvanchal University", year: "2010" },
+];
+
+// Skill matching keywords for recruiter tool
+export const skillKeywords: Record<string, string[]> = {
+  "Operations Management": ["operations", "ops", "business operations", "order management", "supply chain"],
+  "RPA Programme Management": ["rpa", "robotic process automation", "automation", "blue prism", "uipath", "bots"],
+  "Blue Prism (Business SME)": ["blue prism", "rpa developer", "process automation", "sme"],
+  "Generative AI (Prompt Engineering)": ["generative ai", "genai", "prompt engineering", "ai", "artificial intelligence", "llm", "chatgpt"],
+  "No-Code App Development": ["no-code", "low-code", "citizen developer", "app development"],
+  "Process Improvement": ["process improvement", "process optimization", "continuous improvement", "kaizen"],
+  "Lean Six Sigma (Green Belt)": ["lean", "six sigma", "green belt", "lss", "dmaic", "quality"],
+  "SAP S/4HANA Migration": ["sap", "s4hana", "s/4hana", "erp", "sap migration", "hana"],
+  "Change Management": ["change management", "transformation", "organizational change"],
+  "Stakeholder Management": ["stakeholder management", "stakeholder engagement", "client management"],
+  "Power BI": ["power bi", "powerbi", "dashboards", "data visualization", "analytics", "reporting"],
+  "KPI Governance": ["kpi", "metrics", "governance", "performance management"],
+  "Cross-functional Leadership": ["leadership", "team management", "people management", "cross-functional"],
+  "ServiceNow": ["servicenow", "itsm", "it service management", "incident management"],
+  "Zendesk": ["zendesk", "customer service", "helpdesk", "ticketing"],
+  "Global People Management": ["people management", "team lead", "managing teams", "global teams"],
+};
+
+// Career growth timeline for charts
+export const careerTimeline = [
+  { year: 2012, role: "Graduate", level: 1, skills: 2 },
+  { year: 2014, role: "Language Specialist", level: 2, skills: 4 },
+  { year: 2017, role: "Sr French Specialist", level: 3, skills: 6 },
+  { year: 2020, role: "Sr Specialist", level: 4, skills: 9 },
+  { year: 2022, role: "Lead Analyst", level: 6, skills: 13 },
+  { year: 2025, role: "Sr Leader", level: 8, skills: 16 },
 ];
