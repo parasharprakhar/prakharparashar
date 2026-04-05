@@ -1,10 +1,22 @@
 import { motion } from "framer-motion";
 import { profile } from "@/data/portfolio";
-import { Linkedin, Mail, ArrowUpRight } from "lucide-react";
+import { Linkedin, Mail, ArrowUpRight, Github, Phone, Lock } from "lucide-react";
+import { useState } from "react";
 
 const ContactSection = () => {
+  const [showPhoneDialog, setShowPhoneDialog] = useState(false);
+  const [visitorPhone, setVisitorPhone] = useState("");
+  const [phoneRevealed, setPhoneRevealed] = useState(false);
+
+  const handleRevealPhone = () => {
+    if (visitorPhone.length >= 10) {
+      setPhoneRevealed(true);
+      setShowPhoneDialog(false);
+    }
+  };
+
   return (
-    <section id="contact" className="py-24 px-6">
+    <section id="contact" className="py-16 px-6">
       <div className="max-w-3xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -17,14 +29,14 @@ const ContactSection = () => {
             <br />
             <span className="text-gradient">digital transformation.</span>
           </p>
-          <p className="text-muted-foreground mb-10 max-w-md mx-auto">
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto">
             Open to conversations about RPA strategy, operational excellence, and AI-driven process innovation.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             <a
-              href={`mailto:${profile.contact.phone}@email.com`}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+              href={`mailto:${profile.contact.email}`}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors text-sm"
             >
               <Mail className="w-4 h-4" />
               Email Me
@@ -33,16 +45,77 @@ const ContactSection = () => {
               href={profile.contact.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border text-foreground hover:border-primary/50 hover:text-primary transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-colors text-sm"
             >
               <Linkedin className="w-4 h-4" />
               LinkedIn
               <ArrowUpRight className="w-3 h-3" />
             </a>
+            <a
+              href={profile.contact.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-purple-500/30 text-purple-400 hover:bg-purple-500/10 transition-colors text-sm"
+            >
+              <Github className="w-4 h-4" />
+              GitHub
+              <ArrowUpRight className="w-3 h-3" />
+            </a>
+            {phoneRevealed ? (
+              <a
+                href={`tel:${profile.contact.phone}`}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors text-sm"
+              >
+                <Phone className="w-4 h-4" />
+                {profile.contact.phone}
+              </a>
+            ) : (
+              <button
+                onClick={() => setShowPhoneDialog(true)}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-border text-muted-foreground hover:border-primary/50 hover:text-primary transition-colors text-sm"
+              >
+                <Lock className="w-4 h-4" />
+                Reveal Phone
+              </button>
+            )}
           </div>
         </motion.div>
 
-        <div className="mt-24 pt-8 border-t border-border">
+        {/* Phone Reveal Dialog */}
+        {showPhoneDialog && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowPhoneDialog(false)}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-card border border-border rounded-xl p-6 w-80"
+            >
+              <h3 className="text-foreground font-semibold mb-2">Reveal Phone Number</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Please enter your mobile number to view contact details.
+              </p>
+              <input
+                type="tel"
+                value={visitorPhone}
+                onChange={(e) => setVisitorPhone(e.target.value)}
+                placeholder="Your mobile number"
+                className="w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground text-sm mb-3 focus:outline-none focus:border-primary"
+              />
+              <button
+                onClick={handleRevealPhone}
+                disabled={visitorPhone.length < 10}
+                className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50 hover:bg-primary/90 transition-colors"
+              >
+                Show Phone Number
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        <div className="mt-16 pt-6 border-t border-border">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} {profile.name}. Built with purpose.
           </p>
