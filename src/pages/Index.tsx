@@ -10,11 +10,16 @@ import AwardsSection from "@/components/portfolio/AwardsSection";
 import RecruiterSection from "@/components/portfolio/RecruiterSection";
 import FeedbackSection from "@/components/portfolio/FeedbackSection";
 import ContactSection from "@/components/portfolio/ContactSection";
+import { useVisitorTracking } from "@/hooks/useVisitorTracking";
+import { useTheme } from "@/hooks/useTheme";
 
 const Index = () => {
+  useVisitorTracking();
+  const { theme, setTheme } = useTheme();
+
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <Navbar theme={theme} setTheme={setTheme} />
       <HeroSection />
       <AboutSection />
       <SkillsSection />
