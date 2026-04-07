@@ -14,16 +14,171 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      feedback: {
+        Row: {
+          created_at: string
+          feedback_text: string | null
+          id: string
+          rating: number
+          visitor_city: string | null
+          visitor_company: string | null
+          visitor_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          rating: number
+          visitor_city?: string | null
+          visitor_company?: string | null
+          visitor_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          rating?: number
+          visitor_city?: string | null
+          visitor_company?: string | null
+          visitor_name?: string | null
+        }
+        Relationships: []
+      }
+      page_clicks: {
+        Row: {
+          clicked_at: string
+          element_label: string | null
+          element_type: string
+          id: string
+          session_id: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          element_label?: string | null
+          element_type: string
+          id?: string
+          session_id?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          element_label?: string | null
+          element_type?: string
+          id?: string
+          session_id?: string | null
+        }
+        Relationships: []
+      }
+      recruiter_usage: {
+        Row: {
+          id: string
+          job_description_length: number | null
+          match_percentage: number | null
+          used_at: string
+        }
+        Insert: {
+          id?: string
+          job_description_length?: number | null
+          match_percentage?: number | null
+          used_at?: string
+        }
+        Update: {
+          id?: string
+          job_description_length?: number | null
+          match_percentage?: number | null
+          used_at?: string
+        }
+        Relationships: []
+      }
+      search_keywords: {
+        Row: {
+          id: string
+          keyword: string
+          searched_at: string
+          source: string
+        }
+        Insert: {
+          id?: string
+          keyword: string
+          searched_at?: string
+          source?: string
+        }
+        Update: {
+          id?: string
+          keyword?: string
+          searched_at?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      visitor_sessions: {
+        Row: {
+          created_at: string
+          duration_seconds: number | null
+          ended_at: string | null
+          id: string
+          max_scroll_depth: number | null
+          reached_bottom: boolean | null
+          session_id: string
+          started_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          max_scroll_depth?: number | null
+          reached_bottom?: boolean | null
+          session_id: string
+          started_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          max_scroll_depth?: number | null
+          reached_bottom?: boolean | null
+          session_id?: string
+          started_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +305,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
