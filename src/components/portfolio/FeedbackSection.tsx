@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const FeedbackSection = () => {
   const [rating, setRating] = useState(0);
@@ -10,13 +11,30 @@ const FeedbackSection = () => {
   const [city, setCity] = useState("");
   const [company, setCompany] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [publicFeedback, setPublicFeedback] = useState<any[]>([]);
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    const loadFeedback = async () => {
+      const { data } = await supabase
+        .from("feedback")
+        .select("*")
+        .gte("rating", 4)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (data) setPublicFeedback(data);
+    };
+    loadFeedback();
+  }, [submitted]);
+
+  const handleSubmit = async () => {
     if (rating === 0) return;
-    // Store locally for now (Cloud will handle persistence later)
-    const existing = JSON.parse(localStorage.getItem("portfolio_feedback") || "[]");
-    existing.push({ rating, feedback, name, city, company, date: new Date().toISOString() });
-    localStorage.setItem("portfolio_feedback", JSON.stringify(existing));
+    await supabase.from("feedback").insert({
+      rating,
+      feedback_text: feedback || null,
+      visitor_name: name || null,
+      visitor_city: city || null,
+      visitor_company: company || null,
+    });
     setSubmitted(true);
   };
 
@@ -48,7 +66,6 @@ const FeedbackSection = () => {
               📝 This is only for my continued learning. No email ID is required or collected.
             </p>
 
-            {/* Star Rating */}
             <div className="flex items-center gap-1 mb-4">
               <span className="text-xs text-muted-foreground mr-2">Rating:</span>
               {[1, 2, 3, 4, 5].map((i) => (
@@ -72,26 +89,13 @@ const FeedbackSection = () => {
               </span>
             </div>
 
-            {/* Fields */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your Name (optional)"
-                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground text-xs focus:outline-none focus:border-primary"
-              />
-              <input
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="City (optional)"
-                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground text-xs focus:outline-none focus:border-primary"
-              />
-              <input
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
-                placeholder="Company (optional)"
-                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground text-xs focus:outline-none focus:border-primary"
-              />
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your Name (optional)"
+                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground text-xs focus:outline-none focus:border-primary" />
+              <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="City (optional)"
+                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground text-xs focus:outline-none focus:border-primary" />
+              <input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company (optional)"
+                className="px-3 py-2 rounded-lg bg-background border border-border text-foreground text-xs focus:outline-none focus:border-primary" />
             </div>
 
             <textarea
@@ -112,6 +116,27 @@ const FeedbackSection = () => {
               </button>
             </div>
           </div>
+
+          {/* Public feedback display */}
+          {publicFeedback.length > 0 && (
+            <div className="mt-6 space-y-3">
+              <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider">What visitors say</p>
+              {publicFeedback.map((f) => (
+                <div key={f.id} className="p-3 rounded-lg bg-card/50 border border-border/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} className={`w-3 h-3 ${i <= f.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/20"}`} />
+                      ))}
+                    </div>
+                    <span className="text-xs text-foreground font-medium">{f.visitor_name || "Anonymous"}</span>
+                    {f.visitor_company && <span className="text-xs text-muted-foreground">• {f.visitor_company}</span>}
+                  </div>
+                  {f.feedback_text && <p className="text-xs text-muted-foreground">{f.feedback_text}</p>}
+                </div>
+              ))}
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

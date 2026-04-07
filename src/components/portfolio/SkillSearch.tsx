@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { coreCompetencies, skillKeywords } from "@/data/portfolio";
+import { trackKeyword } from "@/hooks/useVisitorTracking";
 
 const SkillSearch = () => {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -14,6 +16,17 @@ const SkillSearch = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const handleQueryChange = (value: string) => {
+    setQuery(value);
+    setOpen(true);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (value.trim().length >= 2) {
+      debounceRef.current = setTimeout(() => {
+        trackKeyword(value.trim(), "skill_search");
+      }, 2000);
+    }
+  };
 
   const filtered = query.trim()
     ? coreCompetencies.filter((skill) => {
@@ -31,7 +44,7 @@ const SkillSearch = () => {
         <input
           type="text"
           value={query}
-          onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+          onChange={(e) => handleQueryChange(e.target.value)}
           onFocus={() => setOpen(true)}
           placeholder="Search skills..."
           className="bg-transparent text-foreground text-xs outline-none w-28 placeholder:text-muted-foreground"

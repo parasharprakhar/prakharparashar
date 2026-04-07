@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import SkillSearch from "./SkillSearch";
+import ThemeToggle from "./ThemeToggle";
+import type { ThemeMode } from "@/hooks/useTheme";
 
 const links = [
   { label: "About", href: "#about" },
@@ -12,10 +14,16 @@ const links = [
   { label: "Certifications", href: "#certifications" },
   { label: "Awards", href: "#awards" },
   { label: "Recruiter", href: "#recruiter" },
+  { label: "Feedback", href: "#feedback" },
   { label: "Contact", href: "#contact" },
 ];
 
-const Navbar = () => {
+interface NavbarProps {
+  theme: ThemeMode;
+  setTheme: (t: ThemeMode) => void;
+}
+
+const Navbar = ({ theme, setTheme }: NavbarProps) => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -39,27 +47,28 @@ const Navbar = () => {
           PP<span className="text-primary">.</span>
         </a>
 
-        {/* Desktop */}
-        <div className="hidden lg:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-3">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="text-[11px] text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider whitespace-nowrap"
+              className="text-[10px] text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider whitespace-nowrap"
             >
               {l.label}
             </a>
           ))}
           <SkillSearch />
+          <ThemeToggle theme={theme} setTheme={setTheme} />
         </div>
 
-        {/* Mobile toggle */}
-        <button className="lg:hidden text-foreground" onClick={() => setOpen(!open)}>
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle theme={theme} setTheme={setTheme} />
+          <button className="text-foreground" onClick={() => setOpen(!open)}>
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="lg:hidden bg-background/95 backdrop-blur-md border-b border-border px-6 pb-4">
           {links.map((l) => (
