@@ -278,7 +278,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Click Details */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
             { label: "LinkedIn", filter: (c: any) => c.element_label === "LinkedIn" },
             { label: "Email", filter: (c: any) => c.element_label === "Email" },
