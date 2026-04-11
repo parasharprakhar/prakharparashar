@@ -22,7 +22,19 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { navigate("/admin"); return; }
+      const { data: role } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (!role) { navigate("/admin"); return; }
+      await loadData();
+    };
+    checkAuth();
   }, []);
 
   const loadData = async () => {
