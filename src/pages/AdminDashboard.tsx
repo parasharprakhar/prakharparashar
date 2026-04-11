@@ -278,13 +278,18 @@ const AdminDashboard = () => {
         </div>
 
         {/* Click Details */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {["linkedin", "email", "phone"].map((type) => {
-            const count = clicks.filter(c => c.element_type === type).length;
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: "LinkedIn", filter: (c: any) => c.element_label === "LinkedIn" },
+            { label: "Email", filter: (c: any) => c.element_label === "Email" },
+            { label: "Phone Reveal", filter: (c: any) => c.element_label === "Phone Reveal" },
+            { label: "GitHub", filter: (c: any) => c.element_label === "GitHub" },
+          ].map(({ label, filter }) => {
+            const count = clicks.filter(filter).length;
             return (
-              <div key={type} className="p-4 rounded-xl bg-card border border-border text-center">
+              <div key={label} className="p-4 rounded-xl bg-card border border-border text-center">
                 <p className="text-2xl font-bold text-foreground">{count}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">{type} clicks</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{label} clicks</p>
               </div>
             );
           })}
