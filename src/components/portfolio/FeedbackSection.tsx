@@ -24,6 +24,25 @@ const FeedbackSection = () => {
       if (data) setPublicFeedback(data);
     };
     loadFeedback();
+
+    // Real-time subscription for live updates
+    const channel = supabase
+      .channel("public-feedback")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "feedback" },
+        (payload) => {
+          const newFeedback = payload.new as any;
+          if (newFeedback.rating >= 4) {
+            setPublicFeedback((prev) => [newFeedback, ...prev].slice(0, 10));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [submitted]);
 
   const handleSubmit = async () => {
