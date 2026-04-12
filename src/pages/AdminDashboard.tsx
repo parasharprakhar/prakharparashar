@@ -307,6 +307,70 @@ const AdminDashboard = () => {
           )}
         </div>
 
+        {/* Daily Keyword Breakdown */}
+        <div className="p-5 rounded-xl bg-card border border-border mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-foreground">📅 Daily Keyword Breakdown</h3>
+            <button onClick={() => exportToCSV(dailyKeywordRows, "daily_keywords.csv")} className="text-xs text-primary hover:underline">Export</button>
+          </div>
+          {dailyKeywordRows.length === 0 ? (
+            <p className="text-xs text-muted-foreground">No keyword data yet</p>
+          ) : (
+            <div className="overflow-x-auto max-h-72 overflow-y-auto">
+              <table className="w-full text-xs">
+                <thead className="sticky top-0 bg-card">
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 text-muted-foreground font-medium">Date</th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">Keyword</th>
+                    <th className="text-right py-2 text-muted-foreground font-medium">Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dailyKeywordRows.map((row, i) => (
+                    <tr key={i} className="border-b border-border/50">
+                      <td className="py-2 text-muted-foreground">{row.date}</td>
+                      <td className="py-2 text-foreground">{row.keyword}</td>
+                      <td className="py-2 text-right font-medium text-foreground">{row.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Monthly Keyword Breakdown */}
+        <div className="p-5 rounded-xl bg-card border border-border mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-foreground">📊 Monthly Keyword Breakdown</h3>
+            <button onClick={() => exportToCSV(monthlyKeywordRows, "monthly_keywords.csv")} className="text-xs text-primary hover:underline">Export</button>
+          </div>
+          {monthlyKeywordRows.length === 0 ? (
+            <p className="text-xs text-muted-foreground">No keyword data yet</p>
+          ) : (
+            <div className="overflow-x-auto max-h-72 overflow-y-auto">
+              <table className="w-full text-xs">
+                <thead className="sticky top-0 bg-card">
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 text-muted-foreground font-medium">Month</th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">Keyword</th>
+                    <th className="text-right py-2 text-muted-foreground font-medium">Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {monthlyKeywordRows.map((row, i) => (
+                    <tr key={i} className="border-b border-border/50">
+                      <td className="py-2 text-muted-foreground">{row.month}</td>
+                      <td className="py-2 text-foreground">{row.keyword}</td>
+                      <td className="py-2 text-right font-medium text-foreground">{row.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
         {/* Click Details */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
