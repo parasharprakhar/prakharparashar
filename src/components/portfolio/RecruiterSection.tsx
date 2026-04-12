@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { coreCompetencies, skillKeywords, experience, certifications, keyProjects, profile } from "@/data/portfolio";
+import { coreCompetencies, skillKeywords } from "@/data/portfolio";
 import { Search, Briefcase, ShieldCheck, X } from "lucide-react";
 import { trackRecruiterUsage } from "@/hooks/useVisitorTracking";
 
@@ -49,7 +49,7 @@ const experienceKeywords: string[] = [
 
 const matchJobDescription = (jobDesc: string) => {
   const jdLower = jobDesc.toLowerCase();
-  const jdWords = new Set(jdLower.split(/[\s,;.\/\-()]+/).filter(w => w.length > 2));
+  
 
   // 1. Match core competencies (primary skills)
   const matchedSkills: string[] = [];
