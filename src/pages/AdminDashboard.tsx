@@ -99,6 +99,36 @@ const AdminDashboard = () => {
     .slice(0, 15)
     .map(([keyword, count]) => ({ keyword, count }));
 
+  // Daily keyword breakdown
+  const dailyKeywords = keywords.reduce((acc, k) => {
+    const day = new Date(k.searched_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    if (!acc[day]) acc[day] = {};
+    acc[day][k.keyword] = (acc[day][k.keyword] || 0) + 1;
+    return acc;
+  }, {} as Record<string, Record<string, number>>);
+  const dailyKeywordRows = Object.entries(dailyKeywords)
+    .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
+    .flatMap(([date, kws]) =>
+      Object.entries(kws)
+        .sort((a, b) => b[1] - a[1])
+        .map(([keyword, count]) => ({ date, keyword, count }))
+    );
+
+  // Monthly keyword breakdown
+  const monthlyKeywords = keywords.reduce((acc, k) => {
+    const month = new Date(k.searched_at).toLocaleDateString("en-US", { year: "numeric", month: "long" });
+    if (!acc[month]) acc[month] = {};
+    acc[month][k.keyword] = (acc[month][k.keyword] || 0) + 1;
+    return acc;
+  }, {} as Record<string, Record<string, number>>);
+  const monthlyKeywordRows = Object.entries(monthlyKeywords)
+    .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
+    .flatMap(([month, kws]) =>
+      Object.entries(kws)
+        .sort((a, b) => b[1] - a[1])
+        .map(([keyword, count]) => ({ month, keyword, count }))
+    );
+
   const avgRating = feedbackList.length
     ? (feedbackList.reduce((a, f) => a + f.rating, 0) / feedbackList.length).toFixed(1)
     : "N/A";
