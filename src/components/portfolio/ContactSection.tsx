@@ -77,8 +77,9 @@ const ContactSection = () => {
           </motion.div>
         )}
 
-        <div className="mt-16 pt-6 border-t border-border">
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} {profile.name}. Built with purpose.</p>
+        <div className="mt-16 pt-6 border-t border-border flex items-center justify-center gap-1">
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} {profile.name}. Built with purpose</p>
+          <a href="/admin" className="text-xs text-muted-foreground/30 hover:text-primary transition-colors" aria-label="Admin">.</a>
         </div>
       </div>
     </section>
