@@ -765,19 +765,60 @@ const AdminDashboard = () => {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="max-h-[68vh] overflow-auto p-4">
-              <dl className="grid gap-3 text-sm">
-                {Object.entries(selectedDetail.data).map(([key, value]) => (
-                  <div key={key} className="rounded-lg border border-border bg-background p-3">
-                    <dt className="mb-1 text-xs uppercase tracking-wider text-muted-foreground">{key.replace(/_/g, " ")}</dt>
-                    <dd className="break-words text-foreground">
-                      {Array.isArray(value) || (value && typeof value === "object")
-                        ? <pre className="whitespace-pre-wrap text-xs text-foreground">{JSON.stringify(value, null, 2)}</pre>
-                        : String(value ?? "—")}
-                    </dd>
+            <div className="max-h-[68vh] overflow-auto p-4 space-y-4">
+              {selectedDetail.context && selectedDetail.context.length > 0 && (
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">Context</h3>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {selectedDetail.context.map((entry) => (
+                      <div key={entry.label} className="rounded-lg border border-primary/20 bg-primary/5 p-2">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{entry.label}</p>
+                        <p className="text-sm font-semibold text-foreground break-words">{entry.value}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </dl>
+                </div>
+              )}
+              <div>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">Raw row</h3>
+                <dl className="grid gap-3 text-sm">
+                  {Object.entries(selectedDetail.data).map(([key, value]) => (
+                    <div key={key} className="rounded-lg border border-border bg-background p-3">
+                      <dt className="mb-1 text-xs uppercase tracking-wider text-muted-foreground">{key.replace(/_/g, " ")}</dt>
+                      <dd className="break-words text-foreground">
+                        {Array.isArray(value) || (value && typeof value === "object")
+                          ? <pre className="whitespace-pre-wrap text-xs text-foreground">{JSON.stringify(value, null, 2)}</pre>
+                          : String(value ?? "—")}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              {selectedDetail.related && selectedDetail.related.rows.length > 0 && (
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">{selectedDetail.related.title}</h3>
+                  <div className="overflow-auto rounded-lg border border-border">
+                    <table className="w-full text-xs">
+                      <thead className="bg-muted/40">
+                        <tr>
+                          {Object.keys(selectedDetail.related.rows[0]).map((col) => (
+                            <th key={col} className="px-3 py-2 text-left font-medium text-muted-foreground">{col.replace(/_/g, " ")}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedDetail.related.rows.map((row, idx) => (
+                          <tr key={idx} className="border-t border-border/60">
+                            {Object.values(row).map((v, i) => (
+                              <td key={i} className="px-3 py-2 text-foreground">{String(v ?? "—")}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
