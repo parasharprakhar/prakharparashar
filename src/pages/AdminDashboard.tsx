@@ -508,7 +508,7 @@ const AdminDashboard = () => {
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-primary" /> All Feedback
             </h3>
-            <button onClick={() => exportToCSV(searchedFeedbackRows, "filtered_feedback_table.csv")} className="text-xs text-primary hover:underline">Export visible</button>
+            <button onClick={() => runExport("visible feedback", () => exportToCSV(searchedFeedbackRows, "filtered_feedback_table.csv"))} disabled={Boolean(exportProgress)} className="text-xs text-primary hover:underline disabled:opacity-60">Export visible</button>
           </div>
           {searchedFeedbackRows.length === 0 ? (
             <p className="text-xs text-muted-foreground">No feedback matches the selected filters</p>
@@ -550,7 +550,7 @@ const AdminDashboard = () => {
         <div className="p-5 rounded-xl bg-card border border-border mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-foreground">📅 Daily Keyword Breakdown</h3>
-            <button onClick={() => exportToCSV(dailyKeywordRows, "filtered_daily_keywords.csv")} className="text-xs text-primary hover:underline">Export visible</button>
+            <button onClick={() => runExport("visible daily keywords", () => exportToCSV(dailyKeywordRows, "filtered_daily_keywords.csv"))} disabled={Boolean(exportProgress)} className="text-xs text-primary hover:underline disabled:opacity-60">Export visible</button>
           </div>
           {dailyKeywordRows.length === 0 ? (
             <p className="text-xs text-muted-foreground">No daily keyword data matches the selected filters</p>
@@ -588,7 +588,7 @@ const AdminDashboard = () => {
         <div className="p-5 rounded-xl bg-card border border-border mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-foreground">📊 Monthly Keyword Breakdown</h3>
-            <button onClick={() => exportToCSV(monthlyKeywordRows, "filtered_monthly_keywords.csv")} className="text-xs text-primary hover:underline">Export visible</button>
+            <button onClick={() => runExport("visible monthly keywords", () => exportToCSV(monthlyKeywordRows, "filtered_monthly_keywords.csv"))} disabled={Boolean(exportProgress)} className="text-xs text-primary hover:underline disabled:opacity-60">Export visible</button>
           </div>
           {monthlyKeywordRows.length === 0 ? (
             <p className="text-xs text-muted-foreground">No monthly keyword data matches the selected filters</p>
