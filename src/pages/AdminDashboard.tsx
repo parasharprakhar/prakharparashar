@@ -11,6 +11,37 @@ import {
   CalendarDays, AlertTriangle, RefreshCw, X, FileJson,
   ArrowUpDown, ArrowUp, ArrowDown
 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+
+const SORT_STORAGE_KEY = "admin-dashboard-sort-prefs-v1";
+
+const loadStoredSorts = (): Record<string, SortState<string>> => {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(SORT_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
+const persistSort = (id: string, sort: SortState<string>) => {
+  if (typeof window === "undefined") return;
+  try {
+    const current = loadStoredSorts();
+    current[id] = sort;
+    window.localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify(current));
+  } catch {
+    /* ignore */
+  }
+};
+
+const getInitialSort = (id: string, fallback: SortState<string>): SortState<string> => {
+  const stored = loadStoredSorts()[id];
+  return stored && typeof stored.key === "string" && (stored.direction === "asc" || stored.direction === "desc")
+    ? stored
+    : fallback;
+};
 
 const COLORS = ["hsl(175,80%,50%)", "hsl(280,80%,60%)", "hsl(45,95%,55%)", "hsl(340,80%,55%)", "hsl(140,70%,45%)", "hsl(210,80%,55%)"];
 
