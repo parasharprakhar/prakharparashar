@@ -265,14 +265,14 @@ const AdminDashboard = () => {
     acc[day][k.keyword] = (acc[day][k.keyword] || 0) + 1;
     return acc;
   }, {} as Record<string, Record<string, number>>);
-  const dailyKeywordRows = Object.entries(dailyKeywords)
+  const dailyKeywordRows = sortRows(Object.entries(dailyKeywords)
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .flatMap(([date, kws]) =>
       Object.entries(kws)
         .sort((a, b) => b[1] - a[1])
         .map(([keyword, count]) => ({ date, keyword, count }))
     )
-    .filter((row) => matchesSearch(row, tableSearch));
+    .filter((row) => matchesSearch(row, tableSearch)), dailyKeywordSort);
 
   const monthlyKeywords = filteredKeywords.reduce((acc, k) => {
     const month = new Date(k.searched_at).toLocaleDateString("en-US", { year: "numeric", month: "long" });
@@ -280,16 +280,16 @@ const AdminDashboard = () => {
     acc[month][k.keyword] = (acc[month][k.keyword] || 0) + 1;
     return acc;
   }, {} as Record<string, Record<string, number>>);
-  const monthlyKeywordRows = Object.entries(monthlyKeywords)
+  const monthlyKeywordRows = sortRows(Object.entries(monthlyKeywords)
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .flatMap(([month, kws]) =>
       Object.entries(kws)
         .sort((a, b) => b[1] - a[1])
         .map(([keyword, count]) => ({ month, keyword, count }))
     )
-    .filter((row) => matchesSearch(row, tableSearch));
+    .filter((row) => matchesSearch(row, tableSearch)), monthlyKeywordSort);
 
-  const searchedFeedbackRows = filteredFeedback.filter((row) => matchesSearch(row, tableSearch));
+  const searchedFeedbackRows = sortRows(filteredFeedback.filter((row) => matchesSearch(row, tableSearch)), feedbackSort);
 
   const avgRating = filteredFeedback.length
     ? (filteredFeedback.reduce((a, f) => a + f.rating, 0) / filteredFeedback.length).toFixed(1)
