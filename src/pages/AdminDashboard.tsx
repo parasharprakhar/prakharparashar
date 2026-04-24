@@ -208,13 +208,22 @@ const AdminDashboard = () => {
     setSort({ key, direction: current.key === key && current.direction === "asc" ? "desc" : "asc" });
   };
 
-  const runExport = (label: string, action: () => void) => {
-    setExportProgress(`Preparing ${label}...`);
-    window.setTimeout(() => {
-      action();
-      setExportProgress(`${label} exported`);
-      window.setTimeout(() => setExportProgress(null), 2200);
-    }, 80);
+  const runExport = async (label: string, action: () => void | Promise<void>) => {
+    setExportProgress({ label, percent: 5, status: "running" });
+    // simulate prep stages so user sees progress for any export size
+    const stages = [25, 55, 80];
+    for (const percent of stages) {
+      await new Promise((resolve) => window.setTimeout(resolve, 90));
+      setExportProgress({ label, percent, status: "running" });
+    }
+    try {
+      await action();
+      setExportProgress({ label, percent: 100, status: "done" });
+    } catch (err) {
+      setExportProgress({ label: `${label} failed`, percent: 100, status: "done" });
+    } finally {
+      window.setTimeout(() => setExportProgress(null), 1800);
+    }
   };
 
   const isWithinDateRange = (dateValue?: string) => {
