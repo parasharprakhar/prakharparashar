@@ -11,12 +11,46 @@ import {
   CalendarDays, AlertTriangle, RefreshCw, X, FileJson,
   ArrowUpDown, ArrowUp, ArrowDown
 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+
+const SORT_STORAGE_KEY = "admin-dashboard-sort-prefs-v1";
+
+const loadStoredSorts = (): Record<string, SortState<string>> => {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(SORT_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
+const persistSort = (id: string, sort: SortState<string>) => {
+  if (typeof window === "undefined") return;
+  try {
+    const current = loadStoredSorts();
+    current[id] = sort;
+    window.localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify(current));
+  } catch {
+    /* ignore */
+  }
+};
+
+const getInitialSort = (id: string, fallback: SortState<string>): SortState<string> => {
+  const stored = loadStoredSorts()[id];
+  return stored && typeof stored.key === "string" && (stored.direction === "asc" || stored.direction === "desc")
+    ? stored
+    : fallback;
+};
 
 const COLORS = ["hsl(175,80%,50%)", "hsl(280,80%,60%)", "hsl(45,95%,55%)", "hsl(340,80%,55%)", "hsl(140,70%,45%)", "hsl(210,80%,55%)"];
 
+type DetailContextEntry = { label: string; value: string | number };
 type DetailState = {
   title: string;
   data: Record<string, unknown>;
+  context?: DetailContextEntry[];
+  related?: { title: string; rows: Record<string, unknown>[] };
 } | null;
 
 type SortDirection = "asc" | "desc";
@@ -72,13 +106,16 @@ const toSortValue = (value: unknown, key: string) => {
 
 const sortRows = <T extends Record<string, unknown>>(rows: T[], sort: SortState<string>) => {
   const direction = sort.direction === "asc" ? 1 : -1;
-  return [...rows].sort((a, b) => {
-    const left = toSortValue(a[sort.key], sort.key);
-    const right = toSortValue(b[sort.key], sort.key);
-    if (left < right) return -1 * direction;
-    if (left > right) return 1 * direction;
-    return 0;
-  });
+  return rows
+    .map((row, index) => ({ row, index }))
+    .sort((a, b) => {
+      const left = toSortValue(a.row[sort.key], sort.key);
+      const right = toSortValue(b.row[sort.key], sort.key);
+      if (left < right) return -1 * direction;
+      if (left > right) return 1 * direction;
+      return a.index - b.index;
+    })
+    .map((entry) => entry.row);
 };
 
 const AdminDashboard = () => {
@@ -95,10 +132,14 @@ const AdminDashboard = () => {
   const [endDate, setEndDate] = useState(formatDateInput(new Date()));
   const [tableSearch, setTableSearch] = useState("");
   const [selectedDetail, setSelectedDetail] = useState<DetailState>(null);
-  const [exportProgress, setExportProgress] = useState<string | null>(null);
-  const [feedbackSort, setFeedbackSort] = useState<SortState<string>>({ key: "created_at", direction: "desc" });
-  const [dailyKeywordSort, setDailyKeywordSort] = useState<SortState<string>>({ key: "date", direction: "desc" });
-  const [monthlyKeywordSort, setMonthlyKeywordSort] = useState<SortState<string>>({ key: "month", direction: "desc" });
+  const [exportProgress, setExportProgress] = useState<{ label: string; percent: number; status: "running" | "done" } | null>(null);
+  const [feedbackSort, setFeedbackSortState] = useState<SortState<string>>(() => getInitialSort("feedback", { key: "created_at", direction: "desc" }));
+  const [dailyKeywordSort, setDailyKeywordSortState] = useState<SortState<string>>(() => getInitialSort("dailyKeyword", { key: "date", direction: "desc" }));
+  const [monthlyKeywordSort, setMonthlyKeywordSortState] = useState<SortState<string>>(() => getInitialSort("monthlyKeyword", { key: "month", direction: "desc" }));
+
+  const setFeedbackSort = (sort: SortState<string>) => { setFeedbackSortState(sort); persistSort("feedback", sort); };
+  const setDailyKeywordSort = (sort: SortState<string>) => { setDailyKeywordSortState(sort); persistSort("dailyKeyword", sort); };
+  const setMonthlyKeywordSort = (sort: SortState<string>) => { setMonthlyKeywordSortState(sort); persistSort("monthlyKeyword", sort); };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -170,13 +211,22 @@ const AdminDashboard = () => {
     setSort({ key, direction: current.key === key && current.direction === "asc" ? "desc" : "asc" });
   };
 
-  const runExport = (label: string, action: () => void) => {
-    setExportProgress(`Preparing ${label}...`);
-    window.setTimeout(() => {
-      action();
-      setExportProgress(`${label} exported`);
-      window.setTimeout(() => setExportProgress(null), 2200);
-    }, 80);
+  const runExport = async (label: string, action: () => void | Promise<void>) => {
+    setExportProgress({ label, percent: 5, status: "running" });
+    // simulate prep stages so user sees progress for any export size
+    const stages = [25, 55, 80];
+    for (const percent of stages) {
+      await new Promise((resolve) => window.setTimeout(resolve, 90));
+      setExportProgress({ label, percent, status: "running" });
+    }
+    try {
+      await action();
+      setExportProgress({ label, percent: 100, status: "done" });
+    } catch (err) {
+      setExportProgress({ label: `${label} failed`, percent: 100, status: "done" });
+    } finally {
+      window.setTimeout(() => setExportProgress(null), 1800);
+    }
   };
 
   const isWithinDateRange = (dateValue?: string) => {
@@ -189,6 +239,61 @@ const AdminDashboard = () => {
     return true;
   };
 
+  const buildFeedbackDetail = (f: any): DetailState => {
+    const sameRating = feedbackList.filter((row) => row.rating === f.rating).length;
+    const sameCompany = f.visitor_company
+      ? feedbackList.filter((row) => row.visitor_company === f.visitor_company).length
+      : 0;
+    const totalCount = feedbackList.length || 1;
+    const ratingShare = ((sameRating / totalCount) * 100).toFixed(1);
+    const charCount = (f.feedback_text || "").length;
+    return {
+      title: "Feedback Details",
+      data: f,
+      context: [
+        { label: "Rating share", value: `${sameRating} of ${totalCount} (${ratingShare}%)` },
+        { label: "Avg rating overall", value: avgRating },
+        { label: "Same company entries", value: sameCompany },
+        { label: "Feedback length", value: `${charCount} chars` },
+        { label: "Submitted", value: toReadableDate(f.created_at) },
+      ],
+    };
+  };
+
+  const buildKeywordDetail = (
+    keyword: string,
+    bucket: "day" | "month",
+    bucketLabel: string,
+    bucketCount: number,
+  ): DetailState => {
+    const matches = keywords.filter((k) => k.keyword === keyword);
+    const totalAcrossAll = matches.length;
+    const inFilter = filteredKeywords.filter((k) => k.keyword === keyword).length;
+    const uniqueSessions = new Set(matches.map((k) => k.session_id ?? k.id)).size;
+    const lastSeen = matches[0]?.searched_at ? toReadableDate(matches[0].searched_at) : "—";
+    const recentRows = matches.slice(0, 25).map((k) => ({
+      searched_at: toReadableDate(k.searched_at),
+      keyword: k.keyword,
+      session_id: k.session_id ?? "—",
+    }));
+    return {
+      title: `Keyword: "${keyword}"`,
+      data: {
+        keyword,
+        [bucket === "day" ? "date" : "month"]: bucketLabel,
+        count_in_bucket: bucketCount,
+      },
+      context: [
+        { label: bucket === "day" ? "Bucket date" : "Bucket month", value: bucketLabel },
+        { label: "Searches in bucket", value: bucketCount },
+        { label: "Searches in current filter", value: inFilter },
+        { label: "Searches all time", value: totalAcrossAll },
+        { label: "Unique sessions", value: uniqueSessions },
+        { label: "Most recent search", value: lastSeen },
+      ],
+      related: { title: "Recent searches (up to 25)", rows: recentRows },
+    };
+  };
   const filteredSessions = useMemo(() => sessions.filter((s) => isWithinDateRange(s.started_at)), [sessions, startDate, endDate]);
   const filteredClicks = useMemo(() => clicks.filter((c) => isWithinDateRange(c.clicked_at)), [clicks, startDate, endDate]);
   const filteredFeedback = useMemo(() => feedbackList.filter((f) => isWithinDateRange(f.created_at)), [feedbackList, startDate, endDate]);
@@ -347,10 +452,20 @@ const AdminDashboard = () => {
 
         {exportProgress && (
           <div className="mb-6 rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary" role="status" aria-live="polite">
-            <div className="flex items-center gap-2">
-              <RefreshCw className="h-4 w-4 animate-spin" />
-              <span>{exportProgress}</span>
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <div className="flex items-center gap-2">
+                {exportProgress.status === "running"
+                  ? <RefreshCw className="h-4 w-4 animate-spin" />
+                  : <Download className="h-4 w-4" />}
+                <span>
+                  {exportProgress.status === "running"
+                    ? `Preparing ${exportProgress.label}...`
+                    : `${exportProgress.label} ready`}
+                </span>
+              </div>
+              <span className="text-xs font-mono">{exportProgress.percent}%</span>
             </div>
+            <Progress value={exportProgress.percent} className="h-2" />
           </div>
         )}
 
@@ -531,7 +646,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {searchedFeedbackRows.map((f) => (
-                    <tr key={f.id} onClick={() => setSelectedDetail({ title: "Feedback Details", data: f })} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
+                    <tr key={f.id} onClick={() => setSelectedDetail(buildFeedbackDetail(f))} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
                       <td className="py-2 text-muted-foreground">{toReadableDate(f.created_at)}</td>
                       <td className="py-2 text-primary">{"★".repeat(f.rating)}{"☆".repeat(5 - f.rating)}</td>
                       <td className="py-2 text-foreground">{f.visitor_name || "—"}</td>
@@ -572,7 +687,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {dailyKeywordRows.map((row, i) => (
-                    <tr key={`${row.date}-${row.keyword}-${i}`} onClick={() => setSelectedDetail({ title: "Daily Keyword Details", data: row })} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
+                    <tr key={`${row.date}-${row.keyword}-${i}`} onClick={() => setSelectedDetail(buildKeywordDetail(row.keyword, "day", row.date, row.count))} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
                       <td className="py-2 text-muted-foreground">{row.date}</td>
                       <td className="py-2 text-foreground">{row.keyword}</td>
                       <td className="py-2 text-right font-medium text-foreground">{row.count}</td>
@@ -610,7 +725,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {monthlyKeywordRows.map((row, i) => (
-                    <tr key={`${row.month}-${row.keyword}-${i}`} onClick={() => setSelectedDetail({ title: "Monthly Keyword Details", data: row })} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
+                    <tr key={`${row.month}-${row.keyword}-${i}`} onClick={() => setSelectedDetail(buildKeywordDetail(row.keyword, "month", row.month, row.count))} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
                       <td className="py-2 text-muted-foreground">{row.month}</td>
                       <td className="py-2 text-foreground">{row.keyword}</td>
                       <td className="py-2 text-right font-medium text-foreground">{row.count}</td>
@@ -650,19 +765,60 @@ const AdminDashboard = () => {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="max-h-[68vh] overflow-auto p-4">
-              <dl className="grid gap-3 text-sm">
-                {Object.entries(selectedDetail.data).map(([key, value]) => (
-                  <div key={key} className="rounded-lg border border-border bg-background p-3">
-                    <dt className="mb-1 text-xs uppercase tracking-wider text-muted-foreground">{key.replace(/_/g, " ")}</dt>
-                    <dd className="break-words text-foreground">
-                      {Array.isArray(value) || (value && typeof value === "object")
-                        ? <pre className="whitespace-pre-wrap text-xs text-foreground">{JSON.stringify(value, null, 2)}</pre>
-                        : String(value ?? "—")}
-                    </dd>
+            <div className="max-h-[68vh] overflow-auto p-4 space-y-4">
+              {selectedDetail.context && selectedDetail.context.length > 0 && (
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">Context</h3>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {selectedDetail.context.map((entry) => (
+                      <div key={entry.label} className="rounded-lg border border-primary/20 bg-primary/5 p-2">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{entry.label}</p>
+                        <p className="text-sm font-semibold text-foreground break-words">{entry.value}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </dl>
+                </div>
+              )}
+              <div>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">Raw row</h3>
+                <dl className="grid gap-3 text-sm">
+                  {Object.entries(selectedDetail.data).map(([key, value]) => (
+                    <div key={key} className="rounded-lg border border-border bg-background p-3">
+                      <dt className="mb-1 text-xs uppercase tracking-wider text-muted-foreground">{key.replace(/_/g, " ")}</dt>
+                      <dd className="break-words text-foreground">
+                        {Array.isArray(value) || (value && typeof value === "object")
+                          ? <pre className="whitespace-pre-wrap text-xs text-foreground">{JSON.stringify(value, null, 2)}</pre>
+                          : String(value ?? "—")}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              {selectedDetail.related && selectedDetail.related.rows.length > 0 && (
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary">{selectedDetail.related.title}</h3>
+                  <div className="overflow-auto rounded-lg border border-border">
+                    <table className="w-full text-xs">
+                      <thead className="bg-muted/40">
+                        <tr>
+                          {Object.keys(selectedDetail.related.rows[0]).map((col) => (
+                            <th key={col} className="px-3 py-2 text-left font-medium text-muted-foreground">{col.replace(/_/g, " ")}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedDetail.related.rows.map((row, idx) => (
+                          <tr key={idx} className="border-t border-border/60">
+                            {Object.values(row).map((v, i) => (
+                              <td key={i} className="px-3 py-2 text-foreground">{String(v ?? "—")}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
