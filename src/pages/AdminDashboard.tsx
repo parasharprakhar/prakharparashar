@@ -394,10 +394,20 @@ const AdminDashboard = () => {
 
         {exportProgress && (
           <div className="mb-6 rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary" role="status" aria-live="polite">
-            <div className="flex items-center gap-2">
-              <RefreshCw className="h-4 w-4 animate-spin" />
-              <span>{exportProgress}</span>
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <div className="flex items-center gap-2">
+                {exportProgress.status === "running"
+                  ? <RefreshCw className="h-4 w-4 animate-spin" />
+                  : <Download className="h-4 w-4" />}
+                <span>
+                  {exportProgress.status === "running"
+                    ? `Preparing ${exportProgress.label}...`
+                    : `${exportProgress.label} ready`}
+                </span>
+              </div>
+              <span className="text-xs font-mono">{exportProgress.percent}%</span>
             </div>
+            <Progress value={exportProgress.percent} className="h-2" />
           </div>
         )}
 
