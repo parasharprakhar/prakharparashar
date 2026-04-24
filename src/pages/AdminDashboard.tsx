@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,7 +8,8 @@ import {
 import {
   LogOut, Users, MousePointerClick, Star, Briefcase,
   Download, ArrowLeft, Clock, Eye, MessageSquare, Search,
-  CalendarDays, AlertTriangle, RefreshCw, X, FileJson
+  CalendarDays, AlertTriangle, RefreshCw, X, FileJson,
+  ArrowUpDown, ArrowUp, ArrowDown
 } from "lucide-react";
 
 const COLORS = ["hsl(175,80%,50%)", "hsl(280,80%,60%)", "hsl(45,95%,55%)", "hsl(340,80%,55%)", "hsl(140,70%,45%)", "hsl(210,80%,55%)"];
@@ -17,6 +18,35 @@ type DetailState = {
   title: string;
   data: Record<string, unknown>;
 } | null;
+
+type SortDirection = "asc" | "desc";
+type SortState<T extends string> = { key: T; direction: SortDirection };
+
+const SortButton = ({
+  active,
+  direction,
+  onClick,
+  children,
+  align = "left",
+}: {
+  active: boolean;
+  direction: SortDirection;
+  onClick: () => void;
+  children: ReactNode;
+  align?: "left" | "right";
+}) => {
+  const Icon = !active ? ArrowUpDown : direction === "asc" ? ArrowUp : ArrowDown;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex w-full items-center gap-1 text-muted-foreground transition-colors hover:text-foreground ${align === "right" ? "justify-end" : "justify-start"}`}
+    >
+      <span>{children}</span>
+      <Icon className="h-3 w-3" />
+    </button>
+  );
+};
 
 const formatDateInput = (date: Date) => date.toISOString().split("T")[0];
 
@@ -29,6 +59,26 @@ const matchesSearch = (row: Record<string, unknown>, term: string) => {
   if (!term.trim()) return true;
   const normalized = term.toLowerCase();
   return Object.values(row).some((value) => String(value ?? "").toLowerCase().includes(normalized));
+};
+
+const toSortValue = (value: unknown, key: string) => {
+  if (typeof value === "number") return value;
+  if (key.includes("date") || key.includes("month") || key.includes("created")) {
+    const timestamp = Date.parse(key.includes("month") ? `${String(value)} 1` : String(value));
+    return Number.isNaN(timestamp) ? 0 : timestamp;
+  }
+  return String(value ?? "").toLowerCase();
+};
+
+const sortRows = <T extends Record<string, unknown>>(rows: T[], sort: SortState<string>) => {
+  const direction = sort.direction === "asc" ? 1 : -1;
+  return [...rows].sort((a, b) => {
+    const left = toSortValue(a[sort.key], sort.key);
+    const right = toSortValue(b[sort.key], sort.key);
+    if (left < right) return -1 * direction;
+    if (left > right) return 1 * direction;
+    return 0;
+  });
 };
 
 const AdminDashboard = () => {
@@ -45,6 +95,10 @@ const AdminDashboard = () => {
   const [endDate, setEndDate] = useState(formatDateInput(new Date()));
   const [tableSearch, setTableSearch] = useState("");
   const [selectedDetail, setSelectedDetail] = useState<DetailState>(null);
+  const [exportProgress, setExportProgress] = useState<string | null>(null);
+  const [feedbackSort, setFeedbackSort] = useState<SortState<string>>({ key: "created_at", direction: "desc" });
+  const [dailyKeywordSort, setDailyKeywordSort] = useState<SortState<string>>({ key: "date", direction: "desc" });
+  const [monthlyKeywordSort, setMonthlyKeywordSort] = useState<SortState<string>>({ key: "month", direction: "desc" });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -112,6 +166,19 @@ const AdminDashboard = () => {
     navigate("/admin");
   };
 
+  const toggleSort = (current: SortState<string>, setSort: (sort: SortState<string>) => void, key: string) => {
+    setSort({ key, direction: current.key === key && current.direction === "asc" ? "desc" : "asc" });
+  };
+
+  const runExport = (label: string, action: () => void) => {
+    setExportProgress(`Preparing ${label}...`);
+    window.setTimeout(() => {
+      action();
+      setExportProgress(`${label} exported`);
+      window.setTimeout(() => setExportProgress(null), 2200);
+    }, 80);
+  };
+
   const isWithinDateRange = (dateValue?: string) => {
     if (!dateValue) return false;
     const date = new Date(dateValue);
@@ -148,22 +215,26 @@ const AdminDashboard = () => {
   };
 
   const exportFilteredCSVBundle = () => {
-    exportToCSV(filteredSessions, "filtered_visitor_sessions.csv");
-    exportToCSV(filteredClicks, "filtered_page_clicks.csv");
-    exportToCSV(filteredFeedback, "filtered_feedback.csv");
-    exportToCSV(filteredKeywords, "filtered_search_keywords.csv");
-    exportToCSV(filteredRecruiterData, "filtered_recruiter_usage.csv");
+    runExport("filtered CSV bundle", () => {
+      exportToCSV(filteredSessions, "filtered_visitor_sessions.csv");
+      exportToCSV(filteredClicks, "filtered_page_clicks.csv");
+      exportToCSV(filteredFeedback, "filtered_feedback.csv");
+      exportToCSV(filteredKeywords, "filtered_search_keywords.csv");
+      exportToCSV(filteredRecruiterData, "filtered_recruiter_usage.csv");
+    });
   };
 
   const exportFilteredJSON = () => {
-    exportToJSON({
-      dateRange: { startDate: startDate || "all", endDate: endDate || "all" },
-      sessions: filteredSessions,
-      clicks: filteredClicks,
-      feedback: filteredFeedback,
-      keywords: filteredKeywords,
-      recruiterUsage: filteredRecruiterData,
-    }, "filtered_admin_analytics.json");
+    runExport("filtered JSON", () => {
+      exportToJSON({
+        dateRange: { startDate: startDate || "all", endDate: endDate || "all" },
+        sessions: filteredSessions,
+        clicks: filteredClicks,
+        feedback: filteredFeedback,
+        keywords: filteredKeywords,
+        recruiterUsage: filteredRecruiterData,
+      }, "filtered_admin_analytics.json");
+    });
   };
 
   // Derived analytics
@@ -194,14 +265,14 @@ const AdminDashboard = () => {
     acc[day][k.keyword] = (acc[day][k.keyword] || 0) + 1;
     return acc;
   }, {} as Record<string, Record<string, number>>);
-  const dailyKeywordRows = Object.entries(dailyKeywords)
+  const dailyKeywordRows = sortRows(Object.entries(dailyKeywords)
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .flatMap(([date, kws]) =>
       Object.entries(kws)
         .sort((a, b) => b[1] - a[1])
         .map(([keyword, count]) => ({ date, keyword, count }))
     )
-    .filter((row) => matchesSearch(row, tableSearch));
+    .filter((row) => matchesSearch(row, tableSearch)), dailyKeywordSort);
 
   const monthlyKeywords = filteredKeywords.reduce((acc, k) => {
     const month = new Date(k.searched_at).toLocaleDateString("en-US", { year: "numeric", month: "long" });
@@ -209,16 +280,16 @@ const AdminDashboard = () => {
     acc[month][k.keyword] = (acc[month][k.keyword] || 0) + 1;
     return acc;
   }, {} as Record<string, Record<string, number>>);
-  const monthlyKeywordRows = Object.entries(monthlyKeywords)
+  const monthlyKeywordRows = sortRows(Object.entries(monthlyKeywords)
     .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
     .flatMap(([month, kws]) =>
       Object.entries(kws)
         .sort((a, b) => b[1] - a[1])
         .map(([keyword, count]) => ({ month, keyword, count }))
     )
-    .filter((row) => matchesSearch(row, tableSearch));
+    .filter((row) => matchesSearch(row, tableSearch)), monthlyKeywordSort);
 
-  const searchedFeedbackRows = filteredFeedback.filter((row) => matchesSearch(row, tableSearch));
+  const searchedFeedbackRows = sortRows(filteredFeedback.filter((row) => matchesSearch(row, tableSearch)), feedbackSort);
 
   const avgRating = filteredFeedback.length
     ? (filteredFeedback.reduce((a, f) => a + f.rating, 0) / filteredFeedback.length).toFixed(1)
@@ -262,10 +333,10 @@ const AdminDashboard = () => {
             <button onClick={loadData} disabled={refreshing} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm hover:text-foreground transition-colors disabled:opacity-60">
               <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} /> Refresh
             </button>
-            <button onClick={exportFilteredCSVBundle} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm hover:bg-primary/20 transition-colors">
+            <button onClick={exportFilteredCSVBundle} disabled={Boolean(exportProgress)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm hover:bg-primary/20 transition-colors disabled:opacity-60">
               <Download className="w-4 h-4" /> Export Filtered CSV
             </button>
-            <button onClick={exportFilteredJSON} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm hover:text-foreground transition-colors">
+            <button onClick={exportFilteredJSON} disabled={Boolean(exportProgress)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm hover:text-foreground transition-colors disabled:opacity-60">
               <FileJson className="w-4 h-4" /> Export JSON
             </button>
             <button onClick={handleLogout} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm hover:text-foreground transition-colors">
@@ -273,6 +344,15 @@ const AdminDashboard = () => {
             </button>
           </div>
         </div>
+
+        {exportProgress && (
+          <div className="mb-6 rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary" role="status" aria-live="polite">
+            <div className="flex items-center gap-2">
+              <RefreshCw className="h-4 w-4 animate-spin" />
+              <span>{exportProgress}</span>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-foreground">
@@ -428,7 +508,7 @@ const AdminDashboard = () => {
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-primary" /> All Feedback
             </h3>
-            <button onClick={() => exportToCSV(searchedFeedbackRows, "filtered_feedback_table.csv")} className="text-xs text-primary hover:underline">Export visible</button>
+            <button onClick={() => runExport("visible feedback", () => exportToCSV(searchedFeedbackRows, "filtered_feedback_table.csv"))} disabled={Boolean(exportProgress)} className="text-xs text-primary hover:underline disabled:opacity-60">Export visible</button>
           </div>
           {searchedFeedbackRows.length === 0 ? (
             <p className="text-xs text-muted-foreground">No feedback matches the selected filters</p>
@@ -437,8 +517,12 @@ const AdminDashboard = () => {
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-card">
                   <tr className="border-b border-border">
-                    <th className="text-left py-2 text-muted-foreground font-medium">Date</th>
-                    <th className="text-left py-2 text-muted-foreground font-medium">Rating</th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={feedbackSort.key === "created_at"} direction={feedbackSort.direction} onClick={() => toggleSort(feedbackSort, setFeedbackSort, "created_at")}>Date</SortButton>
+                    </th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={feedbackSort.key === "rating"} direction={feedbackSort.direction} onClick={() => toggleSort(feedbackSort, setFeedbackSort, "rating")}>Rating</SortButton>
+                    </th>
                     <th className="text-left py-2 text-muted-foreground font-medium">Name</th>
                     <th className="text-left py-2 text-muted-foreground font-medium">City</th>
                     <th className="text-left py-2 text-muted-foreground font-medium">Company</th>
@@ -466,7 +550,7 @@ const AdminDashboard = () => {
         <div className="p-5 rounded-xl bg-card border border-border mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-foreground">📅 Daily Keyword Breakdown</h3>
-            <button onClick={() => exportToCSV(dailyKeywordRows, "filtered_daily_keywords.csv")} className="text-xs text-primary hover:underline">Export visible</button>
+            <button onClick={() => runExport("visible daily keywords", () => exportToCSV(dailyKeywordRows, "filtered_daily_keywords.csv"))} disabled={Boolean(exportProgress)} className="text-xs text-primary hover:underline disabled:opacity-60">Export visible</button>
           </div>
           {dailyKeywordRows.length === 0 ? (
             <p className="text-xs text-muted-foreground">No daily keyword data matches the selected filters</p>
@@ -475,9 +559,15 @@ const AdminDashboard = () => {
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-card">
                   <tr className="border-b border-border">
-                    <th className="text-left py-2 text-muted-foreground font-medium">Date</th>
-                    <th className="text-left py-2 text-muted-foreground font-medium">Keyword</th>
-                    <th className="text-right py-2 text-muted-foreground font-medium">Count</th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={dailyKeywordSort.key === "date"} direction={dailyKeywordSort.direction} onClick={() => toggleSort(dailyKeywordSort, setDailyKeywordSort, "date")}>Date</SortButton>
+                    </th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={dailyKeywordSort.key === "keyword"} direction={dailyKeywordSort.direction} onClick={() => toggleSort(dailyKeywordSort, setDailyKeywordSort, "keyword")}>Keyword</SortButton>
+                    </th>
+                    <th className="text-right py-2 text-muted-foreground font-medium">
+                      <SortButton active={dailyKeywordSort.key === "count"} direction={dailyKeywordSort.direction} onClick={() => toggleSort(dailyKeywordSort, setDailyKeywordSort, "count")} align="right">Count</SortButton>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -498,7 +588,7 @@ const AdminDashboard = () => {
         <div className="p-5 rounded-xl bg-card border border-border mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-foreground">📊 Monthly Keyword Breakdown</h3>
-            <button onClick={() => exportToCSV(monthlyKeywordRows, "filtered_monthly_keywords.csv")} className="text-xs text-primary hover:underline">Export visible</button>
+            <button onClick={() => runExport("visible monthly keywords", () => exportToCSV(monthlyKeywordRows, "filtered_monthly_keywords.csv"))} disabled={Boolean(exportProgress)} className="text-xs text-primary hover:underline disabled:opacity-60">Export visible</button>
           </div>
           {monthlyKeywordRows.length === 0 ? (
             <p className="text-xs text-muted-foreground">No monthly keyword data matches the selected filters</p>
@@ -507,9 +597,15 @@ const AdminDashboard = () => {
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-card">
                   <tr className="border-b border-border">
-                    <th className="text-left py-2 text-muted-foreground font-medium">Month</th>
-                    <th className="text-left py-2 text-muted-foreground font-medium">Keyword</th>
-                    <th className="text-right py-2 text-muted-foreground font-medium">Count</th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={monthlyKeywordSort.key === "month"} direction={monthlyKeywordSort.direction} onClick={() => toggleSort(monthlyKeywordSort, setMonthlyKeywordSort, "month")}>Month</SortButton>
+                    </th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={monthlyKeywordSort.key === "keyword"} direction={monthlyKeywordSort.direction} onClick={() => toggleSort(monthlyKeywordSort, setMonthlyKeywordSort, "keyword")}>Keyword</SortButton>
+                    </th>
+                    <th className="text-right py-2 text-muted-foreground font-medium">
+                      <SortButton active={monthlyKeywordSort.key === "count"} direction={monthlyKeywordSort.direction} onClick={() => toggleSort(monthlyKeywordSort, setMonthlyKeywordSort, "count")} align="right">Count</SortButton>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
