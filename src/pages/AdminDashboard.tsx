@@ -95,6 +95,10 @@ const AdminDashboard = () => {
   const [endDate, setEndDate] = useState(formatDateInput(new Date()));
   const [tableSearch, setTableSearch] = useState("");
   const [selectedDetail, setSelectedDetail] = useState<DetailState>(null);
+  const [exportProgress, setExportProgress] = useState<string | null>(null);
+  const [feedbackSort, setFeedbackSort] = useState<SortState<string>>({ key: "created_at", direction: "desc" });
+  const [dailyKeywordSort, setDailyKeywordSort] = useState<SortState<string>>({ key: "date", direction: "desc" });
+  const [monthlyKeywordSort, setMonthlyKeywordSort] = useState<SortState<string>>({ key: "month", direction: "desc" });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -162,6 +166,19 @@ const AdminDashboard = () => {
     navigate("/admin");
   };
 
+  const toggleSort = (current: SortState<string>, setSort: (sort: SortState<string>) => void, key: string) => {
+    setSort({ key, direction: current.key === key && current.direction === "asc" ? "desc" : "asc" });
+  };
+
+  const runExport = (label: string, action: () => void) => {
+    setExportProgress(`Preparing ${label}...`);
+    window.setTimeout(() => {
+      action();
+      setExportProgress(`${label} exported`);
+      window.setTimeout(() => setExportProgress(null), 2200);
+    }, 80);
+  };
+
   const isWithinDateRange = (dateValue?: string) => {
     if (!dateValue) return false;
     const date = new Date(dateValue);
@@ -198,22 +215,26 @@ const AdminDashboard = () => {
   };
 
   const exportFilteredCSVBundle = () => {
-    exportToCSV(filteredSessions, "filtered_visitor_sessions.csv");
-    exportToCSV(filteredClicks, "filtered_page_clicks.csv");
-    exportToCSV(filteredFeedback, "filtered_feedback.csv");
-    exportToCSV(filteredKeywords, "filtered_search_keywords.csv");
-    exportToCSV(filteredRecruiterData, "filtered_recruiter_usage.csv");
+    runExport("filtered CSV bundle", () => {
+      exportToCSV(filteredSessions, "filtered_visitor_sessions.csv");
+      exportToCSV(filteredClicks, "filtered_page_clicks.csv");
+      exportToCSV(filteredFeedback, "filtered_feedback.csv");
+      exportToCSV(filteredKeywords, "filtered_search_keywords.csv");
+      exportToCSV(filteredRecruiterData, "filtered_recruiter_usage.csv");
+    });
   };
 
   const exportFilteredJSON = () => {
-    exportToJSON({
-      dateRange: { startDate: startDate || "all", endDate: endDate || "all" },
-      sessions: filteredSessions,
-      clicks: filteredClicks,
-      feedback: filteredFeedback,
-      keywords: filteredKeywords,
-      recruiterUsage: filteredRecruiterData,
-    }, "filtered_admin_analytics.json");
+    runExport("filtered JSON", () => {
+      exportToJSON({
+        dateRange: { startDate: startDate || "all", endDate: endDate || "all" },
+        sessions: filteredSessions,
+        clicks: filteredClicks,
+        feedback: filteredFeedback,
+        keywords: filteredKeywords,
+        recruiterUsage: filteredRecruiterData,
+      }, "filtered_admin_analytics.json");
+    });
   };
 
   // Derived analytics
