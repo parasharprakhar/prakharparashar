@@ -591,7 +591,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {searchedFeedbackRows.map((f) => (
-                    <tr key={f.id} onClick={() => setSelectedDetail({ title: "Feedback Details", data: f })} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
+                    <tr key={f.id} onClick={() => setSelectedDetail(buildFeedbackDetail(f))} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
                       <td className="py-2 text-muted-foreground">{toReadableDate(f.created_at)}</td>
                       <td className="py-2 text-primary">{"★".repeat(f.rating)}{"☆".repeat(5 - f.rating)}</td>
                       <td className="py-2 text-foreground">{f.visitor_name || "—"}</td>
