@@ -670,7 +670,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {monthlyKeywordRows.map((row, i) => (
-                    <tr key={`${row.month}-${row.keyword}-${i}`} onClick={() => setSelectedDetail({ title: "Monthly Keyword Details", data: row })} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
+                    <tr key={`${row.month}-${row.keyword}-${i}`} onClick={() => setSelectedDetail(buildKeywordDetail(row.keyword, "month", row.month, row.count))} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
                       <td className="py-2 text-muted-foreground">{row.month}</td>
                       <td className="py-2 text-foreground">{row.keyword}</td>
                       <td className="py-2 text-right font-medium text-foreground">{row.count}</td>
