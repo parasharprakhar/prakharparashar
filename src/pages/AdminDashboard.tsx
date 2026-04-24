@@ -632,7 +632,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {dailyKeywordRows.map((row, i) => (
-                    <tr key={`${row.date}-${row.keyword}-${i}`} onClick={() => setSelectedDetail({ title: "Daily Keyword Details", data: row })} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
+                    <tr key={`${row.date}-${row.keyword}-${i}`} onClick={() => setSelectedDetail(buildKeywordDetail(row.keyword, "day", row.date, row.count))} className="cursor-pointer border-b border-border/50 hover:bg-muted/40">
                       <td className="py-2 text-muted-foreground">{row.date}</td>
                       <td className="py-2 text-foreground">{row.keyword}</td>
                       <td className="py-2 text-right font-medium text-foreground">{row.count}</td>
