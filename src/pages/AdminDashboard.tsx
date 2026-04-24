@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,7 +8,8 @@ import {
 import {
   LogOut, Users, MousePointerClick, Star, Briefcase,
   Download, ArrowLeft, Clock, Eye, MessageSquare, Search,
-  CalendarDays, AlertTriangle, RefreshCw, X, FileJson
+  CalendarDays, AlertTriangle, RefreshCw, X, FileJson,
+  ArrowUpDown, ArrowUp, ArrowDown
 } from "lucide-react";
 
 const COLORS = ["hsl(175,80%,50%)", "hsl(280,80%,60%)", "hsl(45,95%,55%)", "hsl(340,80%,55%)", "hsl(140,70%,45%)", "hsl(210,80%,55%)"];
@@ -17,6 +18,35 @@ type DetailState = {
   title: string;
   data: Record<string, unknown>;
 } | null;
+
+type SortDirection = "asc" | "desc";
+type SortState<T extends string> = { key: T; direction: SortDirection };
+
+const SortButton = ({
+  active,
+  direction,
+  onClick,
+  children,
+  align = "left",
+}: {
+  active: boolean;
+  direction: SortDirection;
+  onClick: () => void;
+  children: ReactNode;
+  align?: "left" | "right";
+}) => {
+  const Icon = !active ? ArrowUpDown : direction === "asc" ? ArrowUp : ArrowDown;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex w-full items-center gap-1 text-muted-foreground transition-colors hover:text-foreground ${align === "right" ? "justify-end" : "justify-start"}`}
+    >
+      <span>{children}</span>
+      <Icon className="h-3 w-3" />
+    </button>
+  );
+};
 
 const formatDateInput = (date: Date) => date.toISOString().split("T")[0];
 
@@ -29,6 +59,26 @@ const matchesSearch = (row: Record<string, unknown>, term: string) => {
   if (!term.trim()) return true;
   const normalized = term.toLowerCase();
   return Object.values(row).some((value) => String(value ?? "").toLowerCase().includes(normalized));
+};
+
+const toSortValue = (value: unknown, key: string) => {
+  if (typeof value === "number") return value;
+  if (key.includes("date") || key.includes("month") || key.includes("created")) {
+    const timestamp = Date.parse(key.includes("month") ? `${String(value)} 1` : String(value));
+    return Number.isNaN(timestamp) ? 0 : timestamp;
+  }
+  return String(value ?? "").toLowerCase();
+};
+
+const sortRows = <T extends Record<string, unknown>>(rows: T[], sort: SortState<string>) => {
+  const direction = sort.direction === "asc" ? 1 : -1;
+  return [...rows].sort((a, b) => {
+    const left = toSortValue(a[sort.key], sort.key);
+    const right = toSortValue(b[sort.key], sort.key);
+    if (left < right) return -1 * direction;
+    if (left > right) return 1 * direction;
+    return 0;
+  });
 };
 
 const AdminDashboard = () => {
