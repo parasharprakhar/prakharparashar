@@ -184,7 +184,7 @@ const AdminDashboard = () => {
     return acc;
   }, {} as Record<string, number>);
   const topKeywords = Object.entries(keywordCounts)
-    .sort((a, b) => b[1] - a[1])
+    .sort((a, b) => Number(b[1]) - Number(a[1]))
     .slice(0, 15)
     .map(([keyword, count]) => ({ keyword, count }));
 
