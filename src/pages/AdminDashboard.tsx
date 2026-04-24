@@ -239,6 +239,61 @@ const AdminDashboard = () => {
     return true;
   };
 
+  const buildFeedbackDetail = (f: any): DetailState => {
+    const sameRating = feedbackList.filter((row) => row.rating === f.rating).length;
+    const sameCompany = f.visitor_company
+      ? feedbackList.filter((row) => row.visitor_company === f.visitor_company).length
+      : 0;
+    const totalCount = feedbackList.length || 1;
+    const ratingShare = ((sameRating / totalCount) * 100).toFixed(1);
+    const charCount = (f.feedback_text || "").length;
+    return {
+      title: "Feedback Details",
+      data: f,
+      context: [
+        { label: "Rating share", value: `${sameRating} of ${totalCount} (${ratingShare}%)` },
+        { label: "Avg rating overall", value: avgRating },
+        { label: "Same company entries", value: sameCompany },
+        { label: "Feedback length", value: `${charCount} chars` },
+        { label: "Submitted", value: toReadableDate(f.created_at) },
+      ],
+    };
+  };
+
+  const buildKeywordDetail = (
+    keyword: string,
+    bucket: "day" | "month",
+    bucketLabel: string,
+    bucketCount: number,
+  ): DetailState => {
+    const matches = keywords.filter((k) => k.keyword === keyword);
+    const totalAcrossAll = matches.length;
+    const inFilter = filteredKeywords.filter((k) => k.keyword === keyword).length;
+    const uniqueSessions = new Set(matches.map((k) => k.session_id ?? k.id)).size;
+    const lastSeen = matches[0]?.searched_at ? toReadableDate(matches[0].searched_at) : "—";
+    const recentRows = matches.slice(0, 25).map((k) => ({
+      searched_at: toReadableDate(k.searched_at),
+      keyword: k.keyword,
+      session_id: k.session_id ?? "—",
+    }));
+    return {
+      title: `Keyword: "${keyword}"`,
+      data: {
+        keyword,
+        [bucket === "day" ? "date" : "month"]: bucketLabel,
+        count_in_bucket: bucketCount,
+      },
+      context: [
+        { label: bucket === "day" ? "Bucket date" : "Bucket month", value: bucketLabel },
+        { label: "Searches in bucket", value: bucketCount },
+        { label: "Searches in current filter", value: inFilter },
+        { label: "Searches all time", value: totalAcrossAll },
+        { label: "Unique sessions", value: uniqueSessions },
+        { label: "Most recent search", value: lastSeen },
+      ],
+      related: { title: "Recent searches (up to 25)", rows: recentRows },
+    };
+  };
   const filteredSessions = useMemo(() => sessions.filter((s) => isWithinDateRange(s.started_at)), [sessions, startDate, endDate]);
   const filteredClicks = useMemo(() => clicks.filter((c) => isWithinDateRange(c.clicked_at)), [clicks, startDate, endDate]);
   const filteredFeedback = useMemo(() => feedbackList.filter((f) => isWithinDateRange(f.created_at)), [feedbackList, startDate, endDate]);
