@@ -45,9 +45,12 @@ const getInitialSort = (id: string, fallback: SortState<string>): SortState<stri
 
 const COLORS = ["hsl(175,80%,50%)", "hsl(280,80%,60%)", "hsl(45,95%,55%)", "hsl(340,80%,55%)", "hsl(140,70%,45%)", "hsl(210,80%,55%)"];
 
+type DetailContextEntry = { label: string; value: string | number };
 type DetailState = {
   title: string;
   data: Record<string, unknown>;
+  context?: DetailContextEntry[];
+  related?: { title: string; rows: Record<string, unknown>[] };
 } | null;
 
 type SortDirection = "asc" | "desc";
