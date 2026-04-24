@@ -333,10 +333,10 @@ const AdminDashboard = () => {
             <button onClick={loadData} disabled={refreshing} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm hover:text-foreground transition-colors disabled:opacity-60">
               <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} /> Refresh
             </button>
-            <button onClick={exportFilteredCSVBundle} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm hover:bg-primary/20 transition-colors">
+            <button onClick={exportFilteredCSVBundle} disabled={Boolean(exportProgress)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm hover:bg-primary/20 transition-colors disabled:opacity-60">
               <Download className="w-4 h-4" /> Export Filtered CSV
             </button>
-            <button onClick={exportFilteredJSON} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm hover:text-foreground transition-colors">
+            <button onClick={exportFilteredJSON} disabled={Boolean(exportProgress)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm hover:text-foreground transition-colors disabled:opacity-60">
               <FileJson className="w-4 h-4" /> Export JSON
             </button>
             <button onClick={handleLogout} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm hover:text-foreground transition-colors">
@@ -344,6 +344,15 @@ const AdminDashboard = () => {
             </button>
           </div>
         </div>
+
+        {exportProgress && (
+          <div className="mb-6 rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary" role="status" aria-live="polite">
+            <div className="flex items-center gap-2">
+              <RefreshCw className="h-4 w-4 animate-spin" />
+              <span>{exportProgress}</span>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-foreground">
