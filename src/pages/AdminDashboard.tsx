@@ -129,10 +129,14 @@ const AdminDashboard = () => {
   const [endDate, setEndDate] = useState(formatDateInput(new Date()));
   const [tableSearch, setTableSearch] = useState("");
   const [selectedDetail, setSelectedDetail] = useState<DetailState>(null);
-  const [exportProgress, setExportProgress] = useState<string | null>(null);
-  const [feedbackSort, setFeedbackSort] = useState<SortState<string>>({ key: "created_at", direction: "desc" });
-  const [dailyKeywordSort, setDailyKeywordSort] = useState<SortState<string>>({ key: "date", direction: "desc" });
-  const [monthlyKeywordSort, setMonthlyKeywordSort] = useState<SortState<string>>({ key: "month", direction: "desc" });
+  const [exportProgress, setExportProgress] = useState<{ label: string; percent: number; status: "running" | "done" } | null>(null);
+  const [feedbackSort, setFeedbackSortState] = useState<SortState<string>>(() => getInitialSort("feedback", { key: "created_at", direction: "desc" }));
+  const [dailyKeywordSort, setDailyKeywordSortState] = useState<SortState<string>>(() => getInitialSort("dailyKeyword", { key: "date", direction: "desc" }));
+  const [monthlyKeywordSort, setMonthlyKeywordSortState] = useState<SortState<string>>(() => getInitialSort("monthlyKeyword", { key: "month", direction: "desc" }));
+
+  const setFeedbackSort = (sort: SortState<string>) => { setFeedbackSortState(sort); persistSort("feedback", sort); };
+  const setDailyKeywordSort = (sort: SortState<string>) => { setDailyKeywordSortState(sort); persistSort("dailyKeyword", sort); };
+  const setMonthlyKeywordSort = (sort: SortState<string>) => { setMonthlyKeywordSortState(sort); persistSort("monthlyKeyword", sort); };
 
   useEffect(() => {
     const checkAuth = async () => {
