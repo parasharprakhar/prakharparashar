@@ -103,13 +103,16 @@ const toSortValue = (value: unknown, key: string) => {
 
 const sortRows = <T extends Record<string, unknown>>(rows: T[], sort: SortState<string>) => {
   const direction = sort.direction === "asc" ? 1 : -1;
-  return [...rows].sort((a, b) => {
-    const left = toSortValue(a[sort.key], sort.key);
-    const right = toSortValue(b[sort.key], sort.key);
-    if (left < right) return -1 * direction;
-    if (left > right) return 1 * direction;
-    return 0;
-  });
+  return rows
+    .map((row, index) => ({ row, index }))
+    .sort((a, b) => {
+      const left = toSortValue(a.row[sort.key], sort.key);
+      const right = toSortValue(b.row[sort.key], sort.key);
+      if (left < right) return -1 * direction;
+      if (left > right) return 1 * direction;
+      return a.index - b.index;
+    })
+    .map((entry) => entry.row);
 };
 
 const AdminDashboard = () => {
