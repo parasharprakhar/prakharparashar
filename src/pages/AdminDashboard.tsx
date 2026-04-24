@@ -517,8 +517,12 @@ const AdminDashboard = () => {
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-card">
                   <tr className="border-b border-border">
-                    <th className="text-left py-2 text-muted-foreground font-medium">Date</th>
-                    <th className="text-left py-2 text-muted-foreground font-medium">Rating</th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={feedbackSort.key === "created_at"} direction={feedbackSort.direction} onClick={() => toggleSort(feedbackSort, setFeedbackSort, "created_at")}>Date</SortButton>
+                    </th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={feedbackSort.key === "rating"} direction={feedbackSort.direction} onClick={() => toggleSort(feedbackSort, setFeedbackSort, "rating")}>Rating</SortButton>
+                    </th>
                     <th className="text-left py-2 text-muted-foreground font-medium">Name</th>
                     <th className="text-left py-2 text-muted-foreground font-medium">City</th>
                     <th className="text-left py-2 text-muted-foreground font-medium">Company</th>
@@ -555,9 +559,15 @@ const AdminDashboard = () => {
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-card">
                   <tr className="border-b border-border">
-                    <th className="text-left py-2 text-muted-foreground font-medium">Date</th>
-                    <th className="text-left py-2 text-muted-foreground font-medium">Keyword</th>
-                    <th className="text-right py-2 text-muted-foreground font-medium">Count</th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={dailyKeywordSort.key === "date"} direction={dailyKeywordSort.direction} onClick={() => toggleSort(dailyKeywordSort, setDailyKeywordSort, "date")}>Date</SortButton>
+                    </th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={dailyKeywordSort.key === "keyword"} direction={dailyKeywordSort.direction} onClick={() => toggleSort(dailyKeywordSort, setDailyKeywordSort, "keyword")}>Keyword</SortButton>
+                    </th>
+                    <th className="text-right py-2 text-muted-foreground font-medium">
+                      <SortButton active={dailyKeywordSort.key === "count"} direction={dailyKeywordSort.direction} onClick={() => toggleSort(dailyKeywordSort, setDailyKeywordSort, "count")} align="right">Count</SortButton>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -587,9 +597,15 @@ const AdminDashboard = () => {
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-card">
                   <tr className="border-b border-border">
-                    <th className="text-left py-2 text-muted-foreground font-medium">Month</th>
-                    <th className="text-left py-2 text-muted-foreground font-medium">Keyword</th>
-                    <th className="text-right py-2 text-muted-foreground font-medium">Count</th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={monthlyKeywordSort.key === "month"} direction={monthlyKeywordSort.direction} onClick={() => toggleSort(monthlyKeywordSort, setMonthlyKeywordSort, "month")}>Month</SortButton>
+                    </th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">
+                      <SortButton active={monthlyKeywordSort.key === "keyword"} direction={monthlyKeywordSort.direction} onClick={() => toggleSort(monthlyKeywordSort, setMonthlyKeywordSort, "keyword")}>Keyword</SortButton>
+                    </th>
+                    <th className="text-right py-2 text-muted-foreground font-medium">
+                      <SortButton active={monthlyKeywordSort.key === "count"} direction={monthlyKeywordSort.direction} onClick={() => toggleSort(monthlyKeywordSort, setMonthlyKeywordSort, "count")} align="right">Count</SortButton>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
