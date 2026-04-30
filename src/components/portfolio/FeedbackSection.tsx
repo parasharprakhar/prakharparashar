@@ -15,44 +15,25 @@ const FeedbackSection = () => {
 
   useEffect(() => {
     const loadFeedback = async () => {
-      const { data } = await supabase
-        .from("feedback")
-        .select("*")
-        .gte("rating", 4)
+      const { data } = await (supabase as any)
+        .from("public_feedback")
+        .select("id, rating, feedback_text, visitor_name, visitor_company, created_at")
         .order("created_at", { ascending: false })
         .limit(10);
       if (data) setPublicFeedback(data);
     };
     loadFeedback();
-
-    // Real-time subscription for live updates
-    const channel = supabase
-      .channel("public-feedback")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "feedback" },
-        (payload) => {
-          const newFeedback = payload.new as any;
-          if (newFeedback.rating >= 4) {
-            setPublicFeedback((prev) => [newFeedback, ...prev].slice(0, 10));
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, [submitted]);
 
   const handleSubmit = async () => {
     if (rating === 0) return;
+    const clip = (s: string, n: number) => s.trim().slice(0, n);
     await supabase.from("feedback").insert({
       rating,
-      feedback_text: feedback || null,
-      visitor_name: name || null,
-      visitor_city: city || null,
-      visitor_company: company || null,
+      feedback_text: feedback ? clip(feedback, 400) : null,
+      visitor_name: name ? clip(name, 100) : null,
+      visitor_city: city ? clip(city, 100) : null,
+      visitor_company: company ? clip(company, 100) : null,
     });
     setSubmitted(true);
   };

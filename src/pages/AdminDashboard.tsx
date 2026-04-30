@@ -300,10 +300,17 @@ const AdminDashboard = () => {
   const filteredKeywords = useMemo(() => keywords.filter((k) => isWithinDateRange(k.searched_at)), [keywords, startDate, endDate]);
   const filteredRecruiterData = useMemo(() => recruiterData.filter((r) => isWithinDateRange(r.used_at)), [recruiterData, startDate, endDate]);
 
+  // Prefix cells starting with =, +, -, @ to neutralize CSV/Excel formula injection
+  const sanitizeCsvCell = (value: unknown) => {
+    const s = String(value ?? "");
+    const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+    return `"${safe.replace(/"/g, '""')}"`;
+  };
+
   const exportToCSV = (data: any[], filename: string) => {
     if (!data.length) return;
     const headers = Object.keys(data[0]).join(",");
-    const rows = data.map(r => Object.values(r).map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const rows = data.map(r => Object.values(r).map(sanitizeCsvCell).join(",")).join("\n");
     const blob = new Blob([headers + "\n" + rows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
