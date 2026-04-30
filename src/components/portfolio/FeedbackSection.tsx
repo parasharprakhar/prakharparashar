@@ -27,12 +27,13 @@ const FeedbackSection = () => {
 
   const handleSubmit = async () => {
     if (rating === 0) return;
+    const clip = (s: string, n: number) => s.trim().slice(0, n);
     await supabase.from("feedback").insert({
       rating,
-      feedback_text: feedback || null,
-      visitor_name: name || null,
-      visitor_city: city || null,
-      visitor_company: company || null,
+      feedback_text: feedback ? clip(feedback, 400) : null,
+      visitor_name: name ? clip(name, 100) : null,
+      visitor_city: city ? clip(city, 100) : null,
+      visitor_company: company ? clip(company, 100) : null,
     });
     setSubmitted(true);
   };
