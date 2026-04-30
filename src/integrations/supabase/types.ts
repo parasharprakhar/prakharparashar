@@ -166,7 +166,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_feedback: {
+        Row: {
+          created_at: string | null
+          feedback_text: string | null
+          id: string | null
+          rating: number | null
+          visitor_company: string | null
+          visitor_name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string | null
+          rating?: number | null
+          visitor_company?: string | null
+          visitor_name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string | null
+          rating?: number | null
+          visitor_company?: string | null
+          visitor_name?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
