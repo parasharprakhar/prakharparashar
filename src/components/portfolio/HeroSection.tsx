@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { profile } from "@/data/portfolio";
 import { ChevronDown, Download, Star, Share2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import profilePhoto from "@/assets/profile-photo.png";
+import profilePhoto from "@/assets/profile-photo.webp";
 import ShareDialog from "./ShareDialog";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -31,7 +31,7 @@ const HeroSection = () => {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }} className="flex-shrink-0">
             <div className="relative">
               <div className="w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden border-2 border-primary/40 glow-border">
-                <img src={profilePhoto} alt={profile.name} className="w-full h-full object-cover" />
+                <img src={profilePhoto} alt={profile.name} width={520} height={520} loading="eager" decoding="async" fetchPriority="high" className="w-full h-full object-cover" />
               </div>
               <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground rounded-full px-3 py-1 text-xs font-bold">
                 Open to Connect
