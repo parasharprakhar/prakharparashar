@@ -50,7 +50,7 @@ export const useVisitorTracking = () => {
     createSession();
 
     const updateSession = async () => {
-      if (!recordId.current) return;
+      if (!sessionId.current) return;
       const duration = Math.round((Date.now() - startTime.current) / 1000);
       const scrollDepth = Math.round(
         (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
