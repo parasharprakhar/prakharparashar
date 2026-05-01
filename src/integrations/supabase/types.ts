@@ -202,6 +202,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_visitor_session: {
+        Args: {
+          _duration_seconds: number
+          _max_scroll_depth: number
+          _reached_bottom: boolean
+          _session_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
