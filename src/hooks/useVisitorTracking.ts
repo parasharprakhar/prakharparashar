@@ -57,15 +57,12 @@ export const useVisitorTracking = () => {
       );
       const reachedBottom = scrollDepth >= 90;
 
-      await supabase
-        .from("visitor_sessions")
-        .update({
-          duration_seconds: duration,
-          max_scroll_depth: scrollDepth,
-          reached_bottom: reachedBottom,
-          ended_at: new Date().toISOString(),
-        })
-        .eq("id", recordId.current);
+      await (supabase as any).rpc("update_visitor_session", {
+        _session_id: sessionId.current,
+        _duration_seconds: duration,
+        _max_scroll_depth: Number.isFinite(scrollDepth) ? scrollDepth : 0,
+        _reached_bottom: reachedBottom,
+      });
     };
 
     const interval = setInterval(updateSession, 15000);
