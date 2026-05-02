@@ -1,6 +1,6 @@
 export const profile = {
   name: "Prakhar Parashar",
-  title: "Senior Operations & Digital Transformation Leader",
+  title: "AI & Automation Strategist | Digital Transformation Leader",
   tagline: "Driving Global Business Transformation Through RPA, AI & Operational Excellence",
   summary: "High-impact Transformation Leader with 13+ years driving global business services, operational excellence, and digital automation in complex B2B manufacturing environments. Managing large-scale teams (17+ analysts) and delivering critical global migrations with near-perfect success rates.",
   stats: [
@@ -8,10 +8,11 @@ export const profile = {
     { value: "7", label: "RPA Initiatives" },
     { value: "100%", label: "Go-Live Success" },
     { value: "98.7%", label: "SAP Migration Success" },
+        { value: "97%", label: "CSAT Achieved" },
   ],
   contact: {
     phone: "+91 8884371684",
-    email: "prakharparashar@outlook.com",
+    email: "prakharparashar@aol.com",
     linkedin: "https://www.linkedin.com/in/prakharparashar",
     github: "https://github.com/parasharprakhar",
   },
