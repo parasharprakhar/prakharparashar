@@ -43,6 +43,14 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <Helmet>
+        <title>Admin Login | Prakhar Parashar</title>
+        <meta name="description" content="Restricted admin sign-in for the portfolio dashboard." />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://prakharparashar.lovable.app/admin" />
+        <meta property="og:title" content="Admin Login | Prakhar Parashar" />
+        <meta property="og:url" content="https://prakharparashar.lovable.app/admin" />
+      </Helmet>
       <div className="w-full max-w-sm">
         <a href="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary mb-8 transition-colors">
           <ArrowLeft className="w-3 h-3" /> Back to Portfolio
