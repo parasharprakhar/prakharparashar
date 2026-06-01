@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/portfolio/Navbar";
 import HeroSection from "@/components/portfolio/HeroSection";
 import AboutSection from "@/components/portfolio/AboutSection";
@@ -19,6 +20,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>O2C Transformation &amp; Automation Portfolio | SAP S/4HANA</title>
+        <meta name="description" content="Prakhar Parashar — O2C Transformation, SAP S/4HANA, RPA and AI-led automation across GCC and GBS operations." />
+        <link rel="canonical" href="https://prakharparashar.lovable.app/" />
+        <meta property="og:url" content="https://prakharparashar.lovable.app/" />
+        <meta property="og:title" content="O2C Transformation & Automation Portfolio | SAP S/4HANA" />
+        <meta property="og:description" content="Prakhar Parashar — O2C Transformation, SAP S/4HANA, RPA and AI-led automation." />
+      </Helmet>
       <Navbar theme={theme} setTheme={setTheme} />
       <HeroSection />
       <AboutSection />
