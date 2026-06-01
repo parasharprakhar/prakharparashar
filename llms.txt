@@ -1,0 +1,7 @@
+# Prakhar Parashar — Automation & O2C Portfolio
+
+> Portfolio of Prakhar Parashar covering Order-to-Cash transformation, SAP S/4HANA, Robotic Process Automation and AI initiatives across GCC and GBS operations.
+
+## Pages
+
+- [Home](/): Overview of experience, skills, certifications, projects and contact details.
