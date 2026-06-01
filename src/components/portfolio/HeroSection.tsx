@@ -44,6 +44,7 @@ const HeroSection = () => {
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[0.95] mb-4">
               <span className="text-foreground">{profile.name.split(" ")[0]}</span><br />
               <span className="text-gradient">{profile.name.split(" ")[1]}</span>
+              <span className="sr-only"> — {profile.title}</span>
             </h1>
             <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mb-2">{profile.title}</p>
             <p className="text-muted-foreground/70 text-sm max-w-xl mb-6 font-light">{profile.tagline}</p>
@@ -85,9 +86,9 @@ const HeroSection = () => {
           </div>
         </motion.div>
 
-        <motion.a href="#about" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
+        <motion.a href="#about" aria-label="Scroll to about section" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
           className="flex justify-center mt-10 text-muted-foreground hover:text-primary transition-colors animate-bounce">
-          <ChevronDown className="w-6 h-6" />
+          <ChevronDown className="w-6 h-6" aria-hidden="true" />
         </motion.a>
       </div>
 

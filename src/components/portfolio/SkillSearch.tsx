@@ -40,18 +40,21 @@ const SkillSearch = () => {
   return (
     <div ref={ref} className="relative">
       <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card/80 border border-border text-sm">
-        <Search className="w-3.5 h-3.5 text-muted-foreground" />
+        <Search className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+        <label htmlFor="skill-search-input" className="sr-only">Search skills</label>
         <input
+          id="skill-search-input"
           type="text"
           value={query}
           onChange={(e) => handleQueryChange(e.target.value)}
           onFocus={() => setOpen(true)}
           placeholder="Search skills..."
+          aria-label="Search skills"
           className="bg-transparent text-foreground text-xs outline-none w-28 placeholder:text-muted-foreground"
         />
         {query && (
-          <button onClick={() => { setQuery(""); setOpen(false); }}>
-            <X className="w-3 h-3 text-muted-foreground" />
+          <button onClick={() => { setQuery(""); setOpen(false); }} aria-label="Clear skill search">
+            <X className="w-3 h-3 text-muted-foreground" aria-hidden="true" />
           </button>
         )}
       </div>
