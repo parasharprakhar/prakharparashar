@@ -23,8 +23,11 @@ const ThemeToggle = ({ theme, setTheme }: ThemeToggleProps) => {
         onClick={() => setOpen(!open)}
         className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
         title="Feeling bored? Change the theme!"
+        aria-label="Change color theme"
+        aria-haspopup="menu"
+        aria-expanded={open}
       >
-        <Palette className="w-4 h-4" />
+        <Palette className="w-4 h-4" aria-hidden="true" />
       </button>
 
       {open && (

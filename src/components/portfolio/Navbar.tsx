@@ -63,14 +63,20 @@ const Navbar = ({ theme, setTheme }: NavbarProps) => {
 
         <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle theme={theme} setTheme={setTheme} />
-          <button className="text-foreground" onClick={() => setOpen(!open)}>
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <button
+            className="text-foreground"
+            onClick={() => setOpen(!open)}
+            aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={open}
+            aria-controls="mobile-nav-menu"
+          >
+            {open ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
           </button>
         </div>
       </div>
 
       {open && (
-        <div className="lg:hidden bg-background/95 backdrop-blur-md border-b border-border px-6 pb-4">
+        <div id="mobile-nav-menu" className="lg:hidden bg-background/95 backdrop-blur-md border-b border-border px-6 pb-4">
           {links.map((l) => (
             <a
               key={l.href}
