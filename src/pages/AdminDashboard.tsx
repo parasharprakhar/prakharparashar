@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import {
@@ -429,6 +430,11 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
+      <Helmet>
+        <title>Admin Dashboard | Prakhar Parashar</title>
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://prakharparashar.lovable.app/admin/dashboard" />
+      </Helmet>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-8 lg:flex-row lg:items-center lg:justify-between">
