@@ -55,7 +55,9 @@ test.describe("Hero — Download CV", () => {
 
     // Cross-check: the same file is reachable directly and served with the
     // correct content-type by the dev server.
-    const direct = await page.request.get(new URL(`./${CV_FILENAME}`, baseURL!).toString());
+    const href = await link.getAttribute("href");
+    expect(href).toBeTruthy();
+    const direct = await page.request.get(new URL(href!, baseURL!).toString());
     expect(direct.status()).toBe(200);
     const ctype = direct.headers()["content-type"] ?? "";
     expect(
