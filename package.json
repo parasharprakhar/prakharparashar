@@ -12,7 +12,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:cv": "playwright test e2e/cv-download.spec.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
