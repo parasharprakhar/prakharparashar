@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 8080;
-const BASE_URL = `http://localhost:${PORT}/prakharparashar/`;
+const BASE_URL = `http://localhost:${PORT}/`;
 
 const chromiumLaunch = process.env.PLAYWRIGHT_CHROMIUM_PATH
   ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
