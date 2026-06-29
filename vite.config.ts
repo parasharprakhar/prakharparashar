@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '/prakharparashar/',
+  base: process.env.DEPLOY_TARGET === 'gh-pages' ? '/prakharparashar/' : '/',
   server: {
     host: "::",
     port: 8080,
