@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:ghpages": "DEPLOY_TARGET=gh-pages npm run build && DEPLOY_TARGET=gh-pages PLAYWRIGHT_BASE_URL=http://localhost:8080/prakharparashar/ PLAYWRIGHT_WEB_SERVER_COMMAND=\"npx vite preview --port 8080 --strictPort\" playwright test",
     "test:e2e:cv": "playwright test e2e/cv-download.spec.ts"
   },
   "dependencies": {

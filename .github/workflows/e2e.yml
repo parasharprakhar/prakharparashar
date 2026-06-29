@@ -9,12 +9,13 @@ on:
 
 jobs:
   playwright:
-    name: Playwright (${{ matrix.project }})
+    name: Playwright (${{ matrix.target }} / ${{ matrix.project }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
+        target: [dev, gh-pages]
         project:
           - desktop-chromium
           - desktop-firefox
@@ -42,16 +43,32 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ contains(matrix.project, 'firefox') && 'firefox' || contains(matrix.project, 'webkit') && 'webkit' || 'chromium' }}
 
-      - name: Run Playwright tests
+      - name: Build for GH Pages
+        if: matrix.target == 'gh-pages'
+        run: npm run build
+        env:
+          DEPLOY_TARGET: gh-pages
+
+      - name: Run Playwright tests (dev server)
+        if: matrix.target == 'dev'
         run: npx playwright test --project=${{ matrix.project }}
         env:
           CI: 'true'
+
+      - name: Run Playwright tests (gh-pages preview)
+        if: matrix.target == 'gh-pages'
+        run: npx playwright test --project=${{ matrix.project }}
+        env:
+          CI: 'true'
+          DEPLOY_TARGET: gh-pages
+          PLAYWRIGHT_BASE_URL: 'http://localhost:8080/prakharparashar/'
+          PLAYWRIGHT_WEB_SERVER_COMMAND: 'npx vite preview --port 8080 --strictPort'
 
       - name: Upload Playwright HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.project }}
+          name: playwright-report-${{ matrix.target }}-${{ matrix.project }}
           path: playwright-report/
           retention-days: 14
 
@@ -59,6 +76,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-traces-${{ matrix.project }}
+          name: playwright-traces-${{ matrix.target }}-${{ matrix.project }}
           path: test-results/
           retention-days: 14
