@@ -1,10 +1,42 @@
-import { createLovableConfig } from "lovable-agent-playwright-config/config";
+import { defineConfig, devices } from "@playwright/test";
 
-export default createLovableConfig({
-  // Add your custom playwright configuration overrides here
-  // Example:
-  // timeout: 60000,
-  // use: {
-  //   baseURL: 'http://localhost:3000',
-  // },
+const PORT = 8080;
+const BASE_URL = `http://localhost:${PORT}/prakharparashar/`;
+
+export default defineConfig({
+  testDir: "./e2e",
+  fullyParallel: true,
+  retries: process.env.CI ? 1 : 0,
+  reporter: process.env.CI ? "github" : "list",
+  use: {
+    baseURL: BASE_URL,
+    trace: "on-first-retry",
+  },
+  projects: [
+    {
+      name: "desktop-chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1280, height: 800 },
+        launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH
+          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+          : undefined,
+      },
+    },
+    {
+      name: "mobile-chromium",
+      use: {
+        ...devices["Pixel 5"],
+        launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH
+          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+          : undefined,
+      },
+    },
+  ],
+  webServer: {
+    command: "npm run dev",
+    url: BASE_URL,
+    reuseExistingServer: true,
+    timeout: 120_000,
+  },
 });
