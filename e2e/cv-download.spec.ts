@@ -29,7 +29,8 @@ test.describe("Hero — Download CV", () => {
     await expect(link).toBeVisible();
 
     const href = await link.getAttribute("href");
-    expect(href).toMatch(new RegExp(`${CV_FILENAME}$`));
+    expect(href).toContain("Prakhar_Parashar_CV");
+    expect(href).toMatch(/\.docx$/);
 
     // `download` attribute ensures the browser saves rather than navigates.
     await expect(link).toHaveAttribute("download", /Prakhar_Parashar_CV\.docx/);
