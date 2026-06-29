@@ -24,19 +24,20 @@ test.describe("Hero — Download CV", () => {
   });
 
   test("link is visible with correct attributes", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("./");
     const link = page.getByRole("link", { name: /download cv/i });
     await expect(link).toBeVisible();
 
     const href = await link.getAttribute("href");
-    expect(href).toMatch(new RegExp(`${CV_FILENAME}$`));
+    expect(href).toContain("Prakhar_Parashar_CV");
+    expect(href).toMatch(/\.docx$/);
 
     // `download` attribute ensures the browser saves rather than navigates.
     await expect(link).toHaveAttribute("download", /Prakhar_Parashar_CV\.docx/);
   });
 
   test("clicking the link downloads the current CV file", async ({ page, baseURL }) => {
-    await page.goto("/");
+    await page.goto("./");
     const link = page.getByRole("link", { name: /download cv/i });
 
     const [download] = await Promise.all([
@@ -55,7 +56,9 @@ test.describe("Hero — Download CV", () => {
 
     // Cross-check: the same file is reachable directly and served with the
     // correct content-type by the dev server.
-    const direct = await page.request.get(new URL(CV_FILENAME, baseURL!).toString());
+    const href = await link.getAttribute("href");
+    expect(href).toBeTruthy();
+    const direct = await page.request.get(new URL(href!, baseURL!).toString());
     expect(direct.status()).toBe(200);
     const ctype = direct.headers()["content-type"] ?? "";
     expect(

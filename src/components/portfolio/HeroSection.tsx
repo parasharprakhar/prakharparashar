@@ -3,6 +3,7 @@ import { profile } from "@/data/portfolio";
 import { ChevronDown, Download, Star, Share2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import profilePhoto from "@/assets/profile-photo.webp";
+import cvFile from "@/assets/Prakhar_Parashar_CV.docx?url";
 import ShareDialog from "./ShareDialog";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -12,10 +13,11 @@ const HeroSection = () => {
 
   useEffect(() => {
     const loadReviews = async () => {
-      const { data } = await supabase.from("feedback").select("rating");
-      if (data && data.length > 0) {
-        const avg = data.reduce((a, r) => a + r.rating, 0) / data.length;
-        setReviewData({ avg: parseFloat(avg.toFixed(1)), count: data.length });
+      const { data } = await supabase.from("public_feedback").select("rating");
+      const ratings = data?.map((r) => r.rating).filter((rating): rating is number => typeof rating === "number") ?? [];
+      if (ratings.length > 0) {
+        const avg = ratings.reduce((a, rating) => a + rating, 0) / ratings.length;
+        setReviewData({ avg: parseFloat(avg.toFixed(1)), count: ratings.length });
       }
     };
     loadReviews();
@@ -31,7 +33,7 @@ const HeroSection = () => {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }} className="flex-shrink-0">
             <div className="relative">
               <div className="w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden border-2 border-primary/40 glow-border">
-                <img src={profilePhoto} alt={profile.name} width={520} height={520} loading="eager" decoding="async" fetchPriority="high" className="w-full h-full object-cover" />
+                <img src={profilePhoto} alt={profile.name} width={520} height={520} loading="eager" decoding="async" {...({ fetchpriority: "high" } as Record<string, string>)} className="w-full h-full object-cover" />
               </div>
               <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground rounded-full px-3 py-1 text-xs font-bold">
                 Open to Connect
@@ -56,7 +58,7 @@ const HeroSection = () => {
                 ))}
                 <span className="text-xs text-muted-foreground ml-1">{reviewData.avg} ({reviewData.count} reviews)</span>
               </div>
-              <a href={`${import.meta.env.BASE_URL}Prakhar_Parashar_CV.docx`} download="Prakhar_Parashar_CV.docx"
+              <a href={cvFile} download="Prakhar_Parashar_CV.docx"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm hover:bg-primary/20 transition-colors">
                 <Download className="w-4 h-4" /> Download CV
               </a>
