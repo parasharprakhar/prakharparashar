@@ -56,7 +56,7 @@ const HeroSection = () => {
                 ))}
                 <span className="text-xs text-muted-foreground ml-1">{reviewData.avg} ({reviewData.count} reviews)</span>
               </div>
-              <a href="/Prakhar_Parashar_CV.docx" download
+              <a href={`${import.meta.env.BASE_URL}Prakhar_Parashar_CV.docx`} download="Prakhar_Parashar_CV.docx"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm hover:bg-primary/20 transition-colors">
                 <Download className="w-4 h-4" /> Download CV
               </a>
