@@ -21,11 +21,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Prakhar Parashar — SAP S/4HANA, RPA &amp; Intelligent Automation Leader</title>
+        <title>Prakhar Parashar — SAP & Automation Leader</title>
         <meta name="description" content="Prakhar Parashar — Senior SAP & Intelligent Automation Leader. 13+ yrs in SAP S/4HANA, Blue Prism RPA, AI-supported automation and GBS O2C transformation." />
         <link rel="canonical" href="https://prakharparashar.lovable.app/" />
         <meta property="og:url" content="https://prakharparashar.lovable.app/" />
-        <meta property="og:title" content="Prakhar Parashar — SAP S/4HANA, RPA & Intelligent Automation Leader" />
+        <meta property="og:title" content="Prakhar Parashar — SAP & Automation Leader" />
         <meta property="og:description" content="Senior SAP & Intelligent Automation Leader — SAP S/4HANA, Blue Prism RPA, AI-supported automation, GBS O2C." />
       </Helmet>
       <Navbar theme={theme} setTheme={setTheme} />

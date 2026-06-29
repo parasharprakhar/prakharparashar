@@ -33,19 +33,15 @@ export const trackRecruiterUsage = async (jobDescLength: number, matchPercentage
 export const useVisitorTracking = () => {
   const sessionId = useRef(getSessionId());
   const startTime = useRef(Date.now());
-  const recordId = useRef<string | null>(null);
 
   useEffect(() => {
     const createSession = async () => {
-      const { data } = await supabase
+      await supabase
         .from("visitor_sessions")
         .insert({
           session_id: sessionId.current,
           user_agent: navigator.userAgent,
-        })
-        .select("id")
-        .single();
-      if (data) recordId.current = data.id;
+        });
     };
     createSession();
 

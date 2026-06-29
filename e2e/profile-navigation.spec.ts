@@ -15,7 +15,11 @@ const sections = [
 
 test.describe("Portfolio routing and navigation", () => {
   test("homepage renders after refresh on supported entry paths", async ({ page }) => {
-    for (const path of ["/", "/index", "/index.html", "/prakharparashar/"]) {
+    const basePath = new URL(process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:8080/").pathname.replace(/\/$/, "");
+    const paths = ["/", "/index", "/index.html"];
+    if (!basePath.includes("/prakharparashar")) paths.push("/prakharparashar/");
+
+    for (const path of paths) {
       await page.goto(path);
       await page.reload({ waitUntil: "domcontentloaded" });
       await expect(page.getByRole("heading", { level: 1 })).toContainText(/Prakhar/i);

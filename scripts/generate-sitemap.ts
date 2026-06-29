@@ -17,6 +17,8 @@ interface SitemapEntry {
 // excluded — they are private surfaces and are also blocked in robots.txt.
 const entries: SitemapEntry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
+  { path: "/index", changefreq: "weekly", priority: "0.8" },
+  { path: "/index.html", changefreq: "weekly", priority: "0.8" },
 ];
 
 const today = new Date().toISOString().slice(0, 10);

@@ -432,8 +432,13 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <Helmet>
         <title>Admin Dashboard | Prakhar Parashar</title>
+        <meta name="description" content="Private analytics dashboard for reviewing portfolio visits, feedback, search keywords, and recruiter tool usage." />
         <meta name="robots" content="noindex,nofollow" />
         <link rel="canonical" href="https://prakharparashar.lovable.app/admin/dashboard" />
+        <meta property="og:title" content="Admin Dashboard | Prakhar Parashar" />
+        <meta property="og:description" content="Private analytics dashboard for reviewing portfolio visits, feedback, search keywords, and recruiter tool usage." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://prakharparashar.lovable.app/admin/dashboard" />
       </Helmet>
       <div className="max-w-7xl mx-auto">
         {/* Header */}

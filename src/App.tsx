@@ -10,24 +10,24 @@ import AdminDashboard from "./pages/AdminDashboard.tsx";
 
 const queryClient = new QueryClient();
 
+const HomeAlias = () => <Index />;
+const routerBasename =
+  import.meta.env.BASE_URL === "/" && window.location.pathname.startsWith("/prakharparashar")
+    ? "/prakharparashar/"
+    : import.meta.env.BASE_URL;
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BrowserRouter basename={routerBasename}>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/index" element={<Index />} />
-          <Route path="/index.html" element={<Index />} />
-          <Route path="/prakharparashar" element={<Index />} />
-          <Route path="/prakharparashar/" element={<Index />} />
-          <Route path="/prakharparashar/index" element={<Index />} />
-          <Route path="/prakharparashar/index.html" element={<Index />} />
+          <Route path="/index" element={<HomeAlias />} />
+          <Route path="/index.html" element={<HomeAlias />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/prakharparashar/admin" element={<AdminLogin />} />
-          <Route path="/prakharparashar/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

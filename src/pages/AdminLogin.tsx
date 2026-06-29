@@ -49,6 +49,8 @@ const AdminLogin = () => {
         <meta name="robots" content="noindex,nofollow" />
         <link rel="canonical" href="https://prakharparashar.lovable.app/admin" />
         <meta property="og:title" content="Admin Login | Prakhar Parashar" />
+        <meta property="og:description" content="Restricted sign-in page for authorized portfolio administrators only." />
+        <meta property="og:type" content="website" />
         <meta property="og:url" content="https://prakharparashar.lovable.app/admin" />
       </Helmet>
       <div className="w-full max-w-sm">
