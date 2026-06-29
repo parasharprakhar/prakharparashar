@@ -20,8 +20,14 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/index" element={<Index />} />
           <Route path="/index.html" element={<Index />} />
+          <Route path="/prakharparashar" element={<Index />} />
+          <Route path="/prakharparashar/" element={<Index />} />
+          <Route path="/prakharparashar/index" element={<Index />} />
+          <Route path="/prakharparashar/index.html" element={<Index />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/prakharparashar/admin" element={<AdminLogin />} />
+          <Route path="/prakharparashar/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
