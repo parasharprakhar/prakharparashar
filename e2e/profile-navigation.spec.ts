@@ -39,7 +39,7 @@ test.describe("Portfolio routing and navigation", () => {
     await page.goto("/");
     for (const section of [sections[0], sections[1], sections[3], sections[9]]) {
       await page.getByRole("button", { name: /open navigation menu/i }).click();
-      await page.getByRole("link", { name: section.label }).click();
+      await page.locator("#mobile-nav-menu").getByRole("link", { name: section.label }).click();
       await expect(page.locator(`#${section.anchor}`)).toBeInViewport({ ratio: 0.15 });
     }
   });
