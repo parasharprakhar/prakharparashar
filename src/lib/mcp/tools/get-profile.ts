@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { profile, education } from "@/data/portfolio";
+import { profile, education } from "../../data/portfolio";
 
 export default defineTool({
   name: "get_profile",

@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { experience, careerTimeline } from "@/data/portfolio";
+import { experience, careerTimeline } from "../../data/portfolio";
 
 export default defineTool({
   name: "list_experience",
