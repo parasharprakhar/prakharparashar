@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "sdk_version": "0.23.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://qnknctdfpvlnpxbgiepf.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "prakhar-portfolio-mcp",
+      "version": "0.1.0",
+      "title": "Prakhar Parashar Portfolio"
+    },
+    "tools": [
+      {
+        "name": "get_profile",
+        "title": "Get profile",
+        "description": "Return Prakhar Parashar's professional profile summary, headline, location, and education.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_skills",
+        "title": "List skills",
+        "description": "List Prakhar's core professional competencies with related keywords.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_experience",
+        "title": "List work experience",
+        "description": "Return Prakhar's work experience entries and career timeline.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_projects",
+        "title": "List key projects",
+        "description": "Return Prakhar's flagship RPA, SAP, and digital transformation projects.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_credentials",
+        "title": "List certifications and awards",
+        "description": "Return Prakhar's certifications and awards.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "submit_feedback",
+        "title": "Submit feedback",
+        "description": "Leave feedback on Prakhar's portfolio as the signed-in user. Rating is 1-5.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "rating": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "description": "Rating from 1 to 5"
+            },
+            "feedback_text": {
+              "type": "string",
+              "maxLength": 2000,
+              "description": "Feedback message"
+            },
+            "visitor_name": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "visitor_company": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "visitor_city": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "required": [
+            "rating"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
