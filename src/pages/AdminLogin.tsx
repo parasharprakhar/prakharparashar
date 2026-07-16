@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Lock, Mail, ArrowLeft } from "lucide-react";
+
+const isSafeNext = (v: string | null): v is string =>
+  !!v && v.startsWith("/") && !v.startsWith("//");
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +13,8 @@ const AdminLogin = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const nextParam = searchParams.get("next");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +28,14 @@ const AdminLogin = () => {
       return;
     }
 
-    // Check admin role
+    // If a `next` redirect target is present (e.g. OAuth consent), send the
+    // user back there without requiring admin privileges.
+    if (isSafeNext(nextParam)) {
+      window.location.href = nextParam;
+      return;
+    }
+
+    // Otherwise this is dashboard access — require admin role.
     const { data: roleData } = await supabase
       .from("user_roles")
       .select("role")
