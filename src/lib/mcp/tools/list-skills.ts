@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { coreCompetencies, skillKeywords } from "../../data/portfolio";
+import { coreCompetencies, skillKeywords } from "../../../data/portfolio";
 
 export default defineTool({
   name: "list_skills",

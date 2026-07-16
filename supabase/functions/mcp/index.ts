@@ -7,7 +7,276 @@ import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.23.0";
 
 // src/lib/mcp/tools/get-profile.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.23.0";
-import { profile, education } from "npm:@/data/portfolio";
+
+// src/data/portfolio.ts
+var profile = {
+  name: "Prakhar Parashar",
+  title: "Senior SAP & Intelligent Automation Leader | Digital Transformation",
+  tagline: "Driving Global Transformation through SAP S/4HANA, RPA & AI-Enabled Automation",
+  summary: "High-impact transformation leader with 13+ years of experience \u2014 including 6+ years across SAP-driven operations, Global Business Services (GBS), and intelligent automation. Proven track record delivering large-scale SAP S/4HANA migrations and 7+ RPA initiatives with 100% go-live success, combining RPA with AI-supported capabilities (Decipher, Nanonets, GenAI) to reduce manual effort and drive measurable business outcomes across Sales, Finance, IT and CoE stakeholders.",
+  stats: [
+    { value: "13+", label: "Years Experience" },
+    { value: "7+", label: "RPA Initiatives" },
+    { value: "100%", label: "Go-Live Success" },
+    { value: "98.7%", label: "SAP Migration Success" },
+    { value: "97%", label: "CSAT Achieved" }
+  ],
+  contact: {
+    phone: "+91 8884371684",
+    email: "prakharparashar@aol.com",
+    linkedin: "https://www.linkedin.com/in/prakharparashar",
+    github: "https://github.com/parasharprakhar"
+  },
+  availability: {
+    weekdays: "12:00 PM \u2013 2:00 PM IST, 6:00 PM \u2013 2:00 AM IST",
+    weekends: "12:00 AM \u2013 2:00 AM IST"
+  }
+};
+var coreCompetencies = [
+  "Operations Management",
+  "Global People Management (17+)",
+  "RPA Programme Management",
+  "Digital Transformation",
+  "Intelligent Automation Design",
+  "Blue Prism (Business SME + Dev)",
+  "Power Automate",
+  "AI-Supported Automation",
+  "Decipher & Nanonets",
+  "Generative AI (Prompt Engineering)",
+  "Claude AI / ChatGPT",
+  "No-Code / GenAI App Development",
+  "Process Re-engineering",
+  "Lean Six Sigma (Green Belt)",
+  "SAP S/4HANA Transformation",
+  "Order-to-Cash (O2C)",
+  "GBS \u2013 OM & CS",
+  "EDI Systems",
+  "UAT Lead",
+  "Root Cause Analysis",
+  "SOP Development",
+  "Change Management",
+  "Stakeholder Management",
+  "Power BI",
+  "KPI Governance",
+  "Global Process Standardisation",
+  "Cross-functional Leadership",
+  "ServiceNow",
+  "Zendesk",
+  "Jira & Clockify",
+  "SharePoint",
+  "Automation ROI & FTE Benefit"
+];
+var experience = [
+  {
+    role: "Senior Operations & Digital Transformation Leader (Senior Lead Analyst | RPA Programme Lead)",
+    company: "Mann+Hummel Filters",
+    location: "Bengaluru",
+    period: "Jul 2025 \u2013 Present",
+    highlights: [
+      "Dual mandate: leading 17+ analysts across GBTS Order Management while serving as GBTS Automation Ambassador \u2014 owning the full RPA & AI pipeline from business case through go-live",
+      "Owning end-to-end automation lifecycle (idea, design, UAT, go-live) across RPA and AI-supported use cases",
+      "Led 7+ Blue Prism RPA initiatives \u2014 100% on-time go-live, zero rework, 99.8% cycle-time reduction (Return Analysis: 2 days \u2192 5 minutes)",
+      "Built Order Entry automation end-to-end in Blue Prism Studio \u2014 request reading through processing \u2014 expanding from Business SME to developer-contributor",
+      "Sole Global POC for SAP S/4HANA migration \u2014 98.7% success, zero revenue disruption; resolved 2,000+ post-migration issues within 3 days",
+      "Reduced backorders from $19M to sub-$1M, delivered ahead of program timeline",
+      "Designed and deployed AI-enabled apps (VocabPro & VocabPro 2.0) improving cross-functional understanding and onboarding efficiency",
+      "Contributed to AI-supported automation initiatives (ACQUA, MOESA) using Decipher and Nanonets",
+      "Manages RPA delivery pipeline using Jira and Clockify alongside the Automation CoE for sprint planning and governance",
+      "Driving case assignment automation to eliminate manual effort and enable global scalability"
+    ]
+  },
+  {
+    role: "Lead Analyst \u2013 Operations & Process Improvement",
+    company: "Mann+Hummel Filters",
+    location: "Bengaluru",
+    period: "Oct 2022 \u2013 Jun 2025",
+    highlights: [
+      "Led RPA adoption for high-volume processes \u2014 85% cycle-time reduction (20 min \u2192 3 min)",
+      "Drove CSAT from 85% to 97% as SAP key user for order entry automation, using Celonis insights and Lean Six Sigma",
+      "Built Power BI dashboards \u2014 improved inventory accuracy from 85% to 98%",
+      "Standardised processes and SOPs across 12 countries \u2014 reduced errors, rework, and escalations",
+      "Applied Lean Six Sigma to identify automation opportunities and eliminate process inefficiencies"
+    ]
+  },
+  {
+    role: "Senior Specialist \u2013 Operations & Process Standardisation",
+    company: "Mann+Hummel Filters",
+    location: "Bengaluru",
+    period: "Jan 2020 \u2013 Sep 2022",
+    highlights: [
+      "Reduced manual effort by 40% \u2014 ideas rooted in early automation thinking that became the foundation for the Blue Prism RPA programme",
+      "Designed and standardised 10+ SOPs adopted as global standards across GBTS Order Management & Customer Service",
+      "Delivered the Mann+Hummel Order Management pilot batch training programme \u2014 zero missed SLA targets post-launch",
+      "Drove 25% improvement in service delivery through targeted SAP processing changes"
+    ]
+  },
+  {
+    role: "Senior French Specialist",
+    company: "Capgemini",
+    location: "Bengaluru",
+    period: "Oct 2017 \u2013 Jan 2020",
+    highlights: [
+      "Managed French-speaking client accounts across EMEA",
+      "Processed multilingual order management operations"
+    ]
+  },
+  {
+    role: "Earlier Career (French Specialist & Language Roles)",
+    company: "Capgemini & Various MNCs",
+    location: "India",
+    period: "2012 \u2013 2017",
+    highlights: [
+      "French Specialist, Capgemini (Mar 2016 \u2013 Sep 2017) \u2014 multilingual operations across EMEA",
+      "Additional language specialist roles supporting customer operations (details available on request)"
+    ]
+  }
+];
+var keyProjects = [
+  {
+    title: "Order Entry Automation (Blue Prism Studio)",
+    year: "2025",
+    description: "End-to-end build \u2014 request reading to processing. Hands-on Blue Prism development, expanding from Business SME to developer-contributor within the Automation CoE pipeline.",
+    tags: ["Blue Prism", "RPA Development", "O2C"],
+    metric: "Full lifecycle delivery"
+  },
+  {
+    title: "Return Analysis Automation",
+    year: "2023",
+    description: "Business SME & UAT Lead for Blue Prism automation achieving 99.8% cycle-time reduction (2 days \u2192 5 minutes) with 2 FTE combined benefit.",
+    tags: ["Blue Prism", "RPA", "UAT"],
+    metric: "99.8% cycle-time reduction"
+  },
+  {
+    title: "Blue Prism RPA Portfolio (7+ initiatives)",
+    year: "2022\u20132025",
+    description: "Business rules, exception handling, UAT Lead, flowchart drafting, PDD creation and SDD validation across the portfolio. 300+ orders processed monthly post-automation.",
+    tags: ["RPA", "Automation", "Process Design"],
+    metric: "100% go-live success"
+  },
+  {
+    title: "SAP S/4HANA Global Migration",
+    year: "2024",
+    description: "GBS OM/CS Global Point of Contact \u2014 end-to-end testing across AP/AR/EDI/Intercompany. Post-migration automated and resolved 2,000+ issues with zero revenue disruption.",
+    tags: ["SAP", "Migration", "Global"],
+    metric: "98.7% success rate"
+  },
+  {
+    title: "Backorder Reduction Programme",
+    year: "2024",
+    description: "Workstream lead reducing backorders from $19M to sub-$1M, completing 3 months ahead of target.",
+    tags: ["Operations", "Cost Savings"],
+    metric: "$19M \u2192 <$1M"
+  },
+  {
+    title: "VocabPro & VocabPro 2.0 (AI Dictionary)",
+    year: "2025",
+    description: "Conceptualized and deployed no-code AI dictionary apps bridging terminology gaps across OM, AR, AP, Pricing and Master Data \u2014 improving cross-functional onboarding.",
+    tags: ["Generative AI", "No-Code", "Innovation"],
+    metric: "Cross-functional adoption"
+  },
+  {
+    title: "ACQUA & MOESA (AI-Supported Automation)",
+    year: "2025",
+    description: "Contributed to AI-supported automation pilots leveraging Decipher and Nanonets for unstructured data extraction and decision-making.",
+    tags: ["AI", "Decipher", "Nanonets"],
+    metric: "Successful rollout"
+  },
+  {
+    title: "Part Convergence",
+    year: "2024",
+    description: "Cross-functional project lead \u2014 reduced shipment errors, lowered customer complaints, and accelerated order processing.",
+    tags: ["O2C", "Cross-functional"],
+    metric: "Errors & complaints reduced"
+  },
+  {
+    title: "EDI Failure Root Cause Analysis",
+    year: "2024",
+    description: "Root cause identification and master data correction delivering a permanent process fix with zero repeat occurrences.",
+    tags: ["EDI", "RCA", "Master Data"],
+    metric: "Zero repeat issues"
+  },
+  {
+    title: "Global SOP Standardisation (12 countries)",
+    year: "2022\u20132024",
+    description: "Process design, training and rollout across 12 countries \u2014 40% manual effort reduction with audit compliance and reduced escalations.",
+    tags: ["SOP", "Global", "Standardisation"],
+    metric: "40% effort reduction"
+  },
+  {
+    title: "Power BI Operational Dashboards",
+    year: "2023",
+    description: "KPI design and RPA ROI tracking dashboards \u2014 improved inventory accuracy from 85% to 98% with 100% process accuracy.",
+    tags: ["Power BI", "Analytics", "KPI"],
+    metric: "Inventory 85% \u2192 98%"
+  },
+  {
+    title: "Cybersecurity Training (53 staff)",
+    year: "2024",
+    description: "Programme designer and sole trainer \u2014 organisation-wide phishing defence and security awareness established.",
+    tags: ["Training", "Security"],
+    metric: "53 staff trained"
+  }
+];
+var certifications = [
+  { name: "Blue Prism Developer", issuer: "SS&C Blue Prism", date: "Oct 2025", category: "RPA & Automation" },
+  { name: "Blue Prism Foundational", issuer: "Neoops", date: "Jun 2026", category: "RPA & Automation" },
+  { name: "Prompt Craft & AI Interaction Track", issuer: "IBM", date: "Jun 2026", category: "AI & Innovation" },
+  { name: "Lean Six Sigma with AI \u2014 Green Belt", issuer: "LinkedIn", date: "Sep 2025", category: "Process Excellence" },
+  { name: "Build Your Own AI Agent (No Code)", issuer: "LinkedIn", date: "Mar 2026", category: "AI & Innovation" },
+  { name: "Generative AI Tools", issuer: "Microsoft", date: "Dec 2025", category: "AI & Innovation" },
+  { name: "Root Cause Analysis", issuer: "PMI", date: "Sep 2025", category: "Process Excellence" },
+  { name: "Security Risks in AI & ML", issuer: "LinkedIn", date: "May 2025", category: "AI & Innovation" },
+  { name: "Atlassian Agile Project Management Professional", issuer: "Atlassian", date: "Feb 2025", category: "Project Management" },
+  { name: "ServiceNow IT Leadership Professional", issuer: "ServiceNow", date: "Dec 2024", category: "IT Service Management" },
+  { name: "Zendesk Customer Service Professional", issuer: "Zendesk", date: "Dec 2024", category: "IT Service Management" }
+];
+var awards = [
+  { title: "Citizen Developer (Designated)", org: "Mann+Hummel", year: "2026" },
+  { title: "GBTS Automation Ambassador", org: "Mann+Hummel", year: "2025" },
+  { title: "Best Team Award", org: "Mann+Hummel", year: "2025" },
+  { title: "Operational Excellence Award \xD73", org: "Mann+Hummel", year: "2022\u20132024" },
+  { title: "Pat on the Back Award", org: "Mann+Hummel", year: "2024" },
+  { title: "Star of the Month \xD72", org: "Capgemini", year: "2017\u20132018" }
+];
+var education = [
+  { degree: "Master's Degree", school: "Banaras Hindu University, Uttar Pradesh", year: "2012" },
+  { degree: "Bachelor's Degree", school: "Veer Bahadur Singh Purvanchal University, UP", year: "2010" }
+];
+var skillKeywords = {
+  "Operations Management": ["operations", "ops", "business operations", "order management", "supply chain"],
+  "RPA Programme Management": ["rpa", "robotic process automation", "automation", "blue prism", "uipath", "bots"],
+  "Blue Prism (Business SME + Dev)": ["blue prism", "rpa developer", "process automation", "sme"],
+  "Power Automate": ["power automate", "microsoft flow", "workflow automation"],
+  "AI-Supported Automation": ["ai automation", "intelligent automation", "ipa", "hyperautomation"],
+  "Decipher & Nanonets": ["decipher", "nanonets", "idp", "intelligent document processing", "ocr"],
+  "Generative AI (Prompt Engineering)": ["generative ai", "genai", "prompt engineering", "ai", "artificial intelligence", "llm", "chatgpt", "claude"],
+  "No-Code / GenAI App Development": ["no-code", "low-code", "citizen developer", "app development"],
+  "Process Re-engineering": ["process improvement", "process optimization", "continuous improvement", "kaizen", "re-engineering"],
+  "Lean Six Sigma (Green Belt)": ["lean", "six sigma", "green belt", "lss", "dmaic", "quality"],
+  "SAP S/4HANA Transformation": ["sap", "s4hana", "s/4hana", "erp", "sap migration", "hana"],
+  "Order-to-Cash (O2C)": ["o2c", "order to cash", "order management", "billing"],
+  "GBS \u2013 OM & CS": ["gbs", "shared services", "global business services", "customer service"],
+  "EDI Systems": ["edi", "electronic data interchange"],
+  "Change Management": ["change management", "transformation", "organizational change"],
+  "Stakeholder Management": ["stakeholder management", "stakeholder engagement", "client management"],
+  "Power BI": ["power bi", "powerbi", "dashboards", "data visualization", "analytics", "reporting"],
+  "KPI Governance": ["kpi", "metrics", "governance", "performance management"],
+  "Cross-functional Leadership": ["leadership", "team management", "people management", "cross-functional"],
+  "ServiceNow": ["servicenow", "itsm", "it service management", "incident management"],
+  "Zendesk": ["zendesk", "customer service", "helpdesk", "ticketing"],
+  "Jira & Clockify": ["jira", "clockify", "agile", "sprint", "scrum"],
+  "Global People Management (17+)": ["people management", "team lead", "managing teams", "global teams"]
+};
+var careerTimeline = [
+  { year: 2012, role: "Graduate", level: 1, skills: 2 },
+  { year: 2016, role: "French Specialist", level: 2, skills: 4 },
+  { year: 2017, role: "Sr French Specialist", level: 3, skills: 6 },
+  { year: 2020, role: "Sr Specialist", level: 4, skills: 9 },
+  { year: 2022, role: "Lead Analyst", level: 6, skills: 13 },
+  { year: 2025, role: "Sr Transformation Leader", level: 8, skills: 18 }
+];
+
+// src/lib/mcp/tools/get-profile.ts
 var get_profile_default = defineTool({
   name: "get_profile",
   title: "Get profile",
@@ -22,7 +291,6 @@ var get_profile_default = defineTool({
 
 // src/lib/mcp/tools/list-skills.ts
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.23.0";
-import { coreCompetencies, skillKeywords } from "npm:@/data/portfolio";
 var list_skills_default = defineTool2({
   name: "list_skills",
   title: "List skills",
@@ -40,7 +308,6 @@ var list_skills_default = defineTool2({
 
 // src/lib/mcp/tools/list-experience.ts
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.23.0";
-import { experience, careerTimeline } from "npm:@/data/portfolio";
 var list_experience_default = defineTool3({
   name: "list_experience",
   title: "List work experience",
@@ -55,7 +322,6 @@ var list_experience_default = defineTool3({
 
 // src/lib/mcp/tools/list-projects.ts
 import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.23.0";
-import { keyProjects } from "npm:@/data/portfolio";
 var list_projects_default = defineTool4({
   name: "list_projects",
   title: "List key projects",
@@ -70,7 +336,6 @@ var list_projects_default = defineTool4({
 
 // src/lib/mcp/tools/list-credentials.ts
 import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.23.0";
-import { certifications, awards } from "npm:@/data/portfolio";
 var list_credentials_default = defineTool5({
   name: "list_credentials",
   title: "List certifications and awards",

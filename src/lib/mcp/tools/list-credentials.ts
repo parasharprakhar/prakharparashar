@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { certifications, awards } from "../../data/portfolio";
+import { certifications, awards } from "../../../data/portfolio";
 
 export default defineTool({
   name: "list_credentials",
