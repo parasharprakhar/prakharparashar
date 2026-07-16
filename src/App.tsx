@@ -29,7 +29,7 @@ const App = () => (
           <Route path="/index.html" element={<HomeAlias />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path=".lovable/oauth/consent" element={<OAuthConsent />} />
+          <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
