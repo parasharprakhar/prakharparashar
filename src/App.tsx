@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import OAuthConsent from "./pages/OAuthConsent.tsx";
+import McpDocs from "./pages/McpDocs.tsx";
 
 const queryClient = new QueryClient();
 
