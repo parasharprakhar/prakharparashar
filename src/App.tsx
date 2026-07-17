@@ -31,6 +31,8 @@ const App = () => (
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+          <Route path="/mcp" element={<McpDocs />} />
+          <Route path="/mcp-docs" element={<McpDocs />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
