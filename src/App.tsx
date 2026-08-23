@@ -34,6 +34,7 @@ const App = () => (
           <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
           <Route path="/mcp" element={<McpDocs />} />
           <Route path="/mcp-docs" element={<McpDocs />} />
+          <Route path="/core" element={<Core />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
