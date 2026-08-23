@@ -9,6 +9,7 @@ import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import OAuthConsent from "./pages/OAuthConsent.tsx";
 import McpDocs from "./pages/McpDocs.tsx";
+import Core from "./pages/Core.tsx";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
           <Route path="/mcp" element={<McpDocs />} />
           <Route path="/mcp-docs" element={<McpDocs />} />
+          <Route path="/core" element={<Core />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
