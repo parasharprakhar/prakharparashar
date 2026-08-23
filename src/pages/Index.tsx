@@ -29,6 +29,12 @@ const Index = () => {
         <meta property="og:description" content="Senior SAP & Intelligent Automation Leader — SAP S/4HANA, Blue Prism RPA, AI-supported automation, GBS O2C." />
       </Helmet>
       <Navbar theme={theme} setTheme={setTheme} />
+      <Link
+        to="/core"
+        className="fixed right-3 top-[68px] md:top-4 z-[60] inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-card/70 backdrop-blur px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-primary hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        Enter CORE Mode →
+      </Link>
       <HeroSection />
       <AboutSection />
       <SkillsSection />
