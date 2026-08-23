@@ -13,60 +13,77 @@ const RING_PCT: Record<string, number> = {
 const Gauge = ({ value, label, pct, delay }: { value: string; label: string; pct: number; delay: number }) => {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
+  const [start, setStart] = useState(false);
   const [display, setDisplay] = useState(0);
   const radius = 46;
   const circumference = 2 * Math.PI * radius;
 
+  // Fallback: never depend solely on the observer — always reveal/animate shortly after mount.
   useEffect(() => {
-    if (!inView) return;
-    const start = performance.now();
+    if (inView) {
+      setStart(true);
+      return;
+    }
+    const t = setTimeout(() => setStart(true), 800);
+    return () => clearTimeout(t);
+  }, [inView]);
+
+  useEffect(() => {
+    if (!start) return;
+    if (typeof window === "undefined" || !window.matchMedia || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplay(pct);
+      return;
+    }
+    const startTime = performance.now();
     const duration = 1100;
     let frame = 0;
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
+      const t = Math.min(1, (now - startTime) / duration);
       setDisplay(pct * (1 - Math.pow(1 - t, 3)));
       if (t < 1) frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [inView, pct]);
+  }, [start, pct]);
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 16 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay, duration: 0.5 }}
-      className="flex flex-col items-center text-center"
-    >
-      <div className="relative w-24 h-24 md:w-28 md:h-28">
-        <svg viewBox="0 0 110 110" className="w-full h-full -rotate-90" aria-hidden="true">
-          <circle cx="55" cy="55" r={radius} fill="none" strokeWidth="7" className="stroke-muted" />
-          <circle
-            cx="55"
-            cy="55"
-            r={radius}
-            fill="none"
-            strokeWidth="7"
-            strokeLinecap="round"
-            className="stroke-primary"
-            style={{
-              strokeDasharray: circumference,
-              strokeDashoffset: circumference - (circumference * display) / 100,
-              filter: "drop-shadow(0 0 6px hsl(var(--primary) / 0.6))",
-            }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="core-display text-lg md:text-xl text-foreground">{value}</span>
+    <div ref={ref} className="flex flex-col items-center text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={start ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+        transition={{ delay, duration: 0.5 }}
+        className="flex flex-col items-center text-center"
+      >
+        <div className="relative w-24 h-24 md:w-28 md:h-28">
+          <svg viewBox="0 0 110 110" className="w-full h-full -rotate-90" aria-hidden="true">
+            <circle cx="55" cy="55" r={radius} fill="none" strokeWidth="7" className="stroke-muted" />
+            <circle
+              cx="55"
+              cy="55"
+              r={radius}
+              fill="none"
+              strokeWidth="7"
+              strokeLinecap="round"
+              className="stroke-primary"
+              style={{
+                strokeDasharray: circumference,
+                strokeDashoffset: circumference - (circumference * display) / 100,
+                filter: "drop-shadow(0 0 6px hsl(var(--primary) / 0.6))",
+              }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="core-display text-lg md:text-xl text-foreground">{value}</span>
+          </div>
         </div>
-      </div>
-      <span className="mt-3 font-mono text-[10px] md:text-xs uppercase tracking-widest text-muted-foreground max-w-[9rem]">
-        {label}
-      </span>
-    </motion.div>
+        <span className="mt-3 font-mono text-[10px] md:text-xs uppercase tracking-widest text-muted-foreground max-w-[9rem]">
+          {label}
+        </span>
+      </motion.div>
+    </div>
   );
 };
+
 
 const CoreHero = () => (
   <section id="core-hero" className="relative px-6 pt-28 pb-20 md:pt-36">
