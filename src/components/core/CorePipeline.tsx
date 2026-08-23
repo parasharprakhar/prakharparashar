@@ -27,18 +27,21 @@ const CorePipeline = () => {
         <div className="relative">
           {/* connector track */}
           <div className="absolute lg:left-0 lg:right-0 lg:top-7 lg:h-px left-7 top-0 bottom-0 w-px lg:w-auto bg-border" />
-          <motion.div
+          {/* glowing data packet travelling along the connector */}
+          <motion.span
             aria-hidden="true"
-            className="absolute rounded-full bg-accent w-2 h-2 lg:top-[22px] left-[22px] lg:left-0"
-            style={{ boxShadow: "0 0 12px 2px hsl(var(--accent) / 0.8)" }}
-            animate={{ y: [0, 0], x: [0, 0] }}
-          >
-            <motion.span
-              className="block w-2 h-2 rounded-full bg-accent"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.6, repeat: Infinity }}
-            />
-          </motion.div>
+            className="hidden lg:block absolute top-[22px] w-2.5 h-2.5 rounded-full bg-accent"
+            style={{ boxShadow: "0 0 14px 3px hsl(var(--accent) / 0.8)" }}
+            animate={{ left: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.span
+            aria-hidden="true"
+            className="lg:hidden absolute left-[22px] w-2.5 h-2.5 rounded-full bg-accent"
+            style={{ boxShadow: "0 0 14px 3px hsl(var(--accent) / 0.8)" }}
+            animate={{ top: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          />
 
           <div className="relative grid gap-6 lg:grid-cols-5">
             {nodes.map((job, i) => {
