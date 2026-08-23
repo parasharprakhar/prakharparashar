@@ -9,6 +9,7 @@ import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import OAuthConsent from "./pages/OAuthConsent.tsx";
 import McpDocs from "./pages/McpDocs.tsx";
+import Core from "./pages/Core.tsx";
 
 const queryClient = new QueryClient();
 
