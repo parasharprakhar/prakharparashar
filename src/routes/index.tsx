@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowDown,
   ArrowUpRight,
-  Bot,
   Check,
   Download,
   ExternalLink,
@@ -204,8 +203,8 @@ function ContactForm() {
       return;
     }
     setStatus("sending");
-    const cloudUrl = import.meta.env.VITE_SUPABASE_URL;
-    const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    const cloudUrl = import.meta.env['VITE_SUPABASE_URL'];
+    const publishableKey = import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'];
     if (!cloudUrl || !publishableKey) {
       setStatus("error");
       setError("Your message could not be sent. Please email Prakhar directly.");
