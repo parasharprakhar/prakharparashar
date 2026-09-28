@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
 
 const description =
   "Senior operations and digital transformation leader specializing in RPA, intelligent automation, SAP S/4HANA, and Order-to-Cash transformation.";
@@ -205,8 +204,23 @@ function ContactForm() {
       return;
     }
     setStatus("sending");
-    const { error: submissionError } = await supabase.from("contact_submissions").insert(parsed.data);
-    if (submissionError) {
+    const cloudUrl = import.meta.env.VITE_SUPABASE_URL;
+    const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    if (!cloudUrl || !publishableKey) {
+      setStatus("error");
+      setError("Your message could not be sent. Please email Prakhar directly.");
+      return;
+    }
+    const response = await fetch(`${cloudUrl}/rest/v1/contact_submissions`, {
+      method: "POST",
+      headers: {
+        apikey: publishableKey,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(parsed.data),
+    });
+    if (!response.ok) {
       setStatus("error");
       setError("Your message could not be sent. Please email Prakhar directly.");
       return;
