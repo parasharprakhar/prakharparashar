@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import vocabProPreview from "@/assets/vocabpro-live-preview.png.asset.json";
 
 const description =
   "Senior operations and digital transformation leader specializing in RPA, intelligent automation, SAP S/4HANA, and Order-to-Cash transformation.";
@@ -260,7 +261,7 @@ function VocabProPreview() {
       <div className="device-bar"><span /><span>VOCABPRO / LIVE PRODUCT</span><span /></div>
       <div className="device-screen">
         {visible ? (
-          <iframe src={vocabProUrl} title="VocabPro live app preview" loading="lazy" />
+          <img src={vocabProPreview.url} alt="VocabPro live app home screen" loading="lazy" />
         ) : <span className="text-sm text-muted-foreground">Loading preview…</span>}
         <span className="vocab-open-cue"><ExternalLink /> Open live app</span>
       </div>
