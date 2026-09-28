@@ -5,5 +5,5 @@
 - [x] Activate the verified VocabPro public app link with a graceful visual fallback.
 - [x] Verify desktop, mobile, keyboard, external links, theme, and contact submission.
 
-- [ ] Replace external VocabPro preview with a self-contained scripted demo.
-- [ ] Verify demo sign-in, navigation, both VocabBot prompts, mobile layout, and existing portfolio interactions.
+- [x] Replace external VocabPro preview with a self-contained scripted demo.
+- [x] Verify demo sign-in, navigation, both VocabBot prompts, mobile layout, and existing portfolio interactions.
