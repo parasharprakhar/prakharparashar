@@ -2,16 +2,25 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowDown,
   ArrowUpRight,
+  BookOpen,
+  Bot,
   Check,
+  ChevronRight,
   Download,
   ExternalLink,
+  Gamepad2,
   Github,
+  Home,
   Linkedin,
+  LockKeyhole,
   Mail,
   Moon,
   Plus,
+  RotateCcw,
   Send,
   Sun,
+  Trophy,
+  Users,
 } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { z } from "zod";
@@ -20,7 +29,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import vocabProPreview from "@/assets/vocabpro-live-preview.png.asset.json";
 
 const description =
   "Senior operations and digital transformation leader specializing in RPA, intelligent automation, SAP S/4HANA, and Order-to-Cash transformation.";
@@ -239,34 +247,115 @@ function Reveal({ children, className = "", delay = 0 }: { children: React.React
   return <div ref={ref} className={`reveal ${visible ? "is-visible" : ""} ${className}`} style={{ "--reveal-delay": `${delay}ms` } as React.CSSProperties}>{children}</div>;
 }
 
-function VocabProPreview() {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const [visible, setVisible] = useState(false);
+type VocabView = "home" | "teams" | "learn" | "play" | "bot";
 
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry?.isIntersecting) {
-        setVisible(true);
-        observer.disconnect();
-      }
-    }, { rootMargin: "240px" });
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+const vocabNav = [
+  ["home", "Home", Home],
+  ["teams", "Teams", Users],
+  ["learn", "Learn", BookOpen],
+  ["play", "Play", Gamepad2],
+  ["bot", "VocabBot", Bot],
+] as const;
+
+function VocabProPreview() {
+  const [loginStep, setLoginStep] = useState<"email" | "password" | "inside">("email");
+  const [view, setView] = useState<VocabView>("home");
+  const [botQuestion, setBotQuestion] = useState<1 | 2 | null>(null);
+
+  function resetDemo() {
+    setLoginStep("email");
+    setView("home");
+    setBotQuestion(null);
+  }
 
   return (
-    <a ref={ref} className="device-shell vocab-live-link" href={vocabProUrl} target="_blank" rel="noreferrer" aria-label="Open the live VocabPro app in a new tab">
-      <div className="device-bar"><span /><span>VOCABPRO / LIVE PRODUCT</span><span /></div>
-      <div className="device-screen">
-        {visible ? (
-          <img src={vocabProPreview.url} alt="VocabPro live app home screen" loading="lazy" />
-        ) : <span className="text-sm text-muted-foreground">Loading preview…</span>}
-        <span className="vocab-open-cue"><ExternalLink /> Open live app</span>
+    <div className="device-shell vocab-demo-shell">
+      <div className="device-bar">
+        <span />
+        <span>VOCABPRO / INTERACTIVE DEMO</span>
+        <span className="demo-mode">DEMO MODE</span>
       </div>
-    </a>
+      <div className="device-screen vocab-demo-screen">
+        {loginStep !== "inside" ? (
+          <div className="vocab-login" key={loginStep}>
+            <div className="vocab-brand"><span>V</span><div><strong>VocabPro</strong><small>Speak the same language.</small></div></div>
+            <div className="vocab-login-copy">
+              <p>Welcome to the product demo</p>
+              <h3>{loginStep === "email" ? "Sign in to continue" : "Enter your password"}</h3>
+              <span>Fictional credentials are pre-filled for this sandbox.</span>
+            </div>
+            <div className="vocab-login-field">
+              <Label htmlFor={loginStep === "email" ? "demo-email" : "demo-password"}>{loginStep === "email" ? "Work email" : "Password"}</Label>
+              {loginStep === "email" ? (
+                <Input id="demo-email" type="email" value="demo@vocabpro.app" readOnly />
+              ) : (
+                <div className="vocab-password"><LockKeyhole /><Input id="demo-password" type="password" value="vocabpro-demo" readOnly /></div>
+              )}
+            </div>
+            <Button type="button" onClick={() => setLoginStep(loginStep === "email" ? "password" : "inside")}>
+              {loginStep === "email" ? "Next" : "Sign in"}<ChevronRight />
+            </Button>
+            {loginStep === "password" ? <Button type="button" variant="ghost" size="sm" onClick={() => setLoginStep("email")}>Back</Button> : null}
+          </div>
+        ) : (
+          <div className="vocab-app">
+            <header className="vocab-app-header">
+              <div className="vocab-brand compact"><span>V</span><strong>VocabPro</strong></div>
+              <div><span className="demo-pill">Demo Mode</span><Button type="button" variant="ghost" size="icon" onClick={resetDemo} title="Restart demo" aria-label="Restart VocabPro demo"><RotateCcw /></Button></div>
+            </header>
+            <main className="vocab-app-content" key={view}>
+              {view === "home" ? <VocabHome onOpen={setView} /> : null}
+              {view === "teams" ? <VocabTeams /> : null}
+              {view === "learn" ? <VocabLearn /> : null}
+              {view === "play" ? <VocabPlay /> : null}
+              {view === "bot" ? <VocabBot question={botQuestion} onQuestion={setBotQuestion} /> : null}
+            </main>
+            <nav className="vocab-app-nav" aria-label="VocabPro demo sections">
+              {vocabNav.map(([id, label, Icon]) => (
+                <Button key={id} type="button" variant="ghost" className={view === id ? "is-active" : ""} onClick={() => setView(id)} aria-label={`Open ${label}`} title={label}>
+                  <Icon /><span>{label}</span>
+                </Button>
+              ))}
+            </nav>
+          </div>
+        )}
+      </div>
+    </div>
   );
+}
+
+function VocabHome({ onOpen }: { onOpen: (view: VocabView) => void }) {
+  return <div className="vocab-view">
+    <p className="vocab-kicker">MONDAY · DEMO WORKSPACE</p>
+    <h3>Good morning, Alex.</h3>
+    <p className="vocab-subtitle">Build confidence across the language of operations.</p>
+    <div className="vocab-progress"><div><span>Weekly learning goal</span><strong>4 of 5 terms</strong></div><div className="vocab-progress-track"><i /></div></div>
+    <div className="vocab-term-card"><div><span>TERM OF THE DAY</span><small>ORDER MANAGEMENT</small></div><h4>Available-to-Promise</h4><p>The uncommitted portion of inventory and planned production available to support new orders.</p></div>
+    <div className="vocab-home-actions">
+      <Button type="button" variant="outline" onClick={() => onOpen("learn")}><BookOpen /> Continue learning</Button>
+      <Button type="button" variant="outline" onClick={() => onOpen("play")}><Gamepad2 /> Quick challenge</Button>
+    </div>
+  </div>;
+}
+
+function VocabTeams() {
+  const members = [["AM", "Aarav Mehta", "Order Management"], ["SK", "Sofia Klein", "Accounts Receivable"], ["LN", "Lena Novak", "Master Data"]];
+  return <div className="vocab-view"><p className="vocab-kicker">SHARED LANGUAGE</p><h3>Teams</h3><p className="vocab-subtitle">Fictional demo members learning across functions.</p><div className="vocab-team-list">{members.map(([initials, name, team]) => <article key={name}><span>{initials}</span><div><strong>{name}</strong><small>{team}</small></div><i>DEMO</i></article>)}</div><div className="vocab-team-stat"><strong>5</strong><span>functions connected</span><strong>28</strong><span>sample terms shared</span></div></div>;
+}
+
+function VocabLearn() {
+  const terms = [["Order-to-Cash", "A complete customer journey from order placement through payment."], ["Dunning", "A structured process for communicating overdue receivables."], ["Intercompany", "Transactions occurring between entities within the same group."]];
+  return <div className="vocab-view"><p className="vocab-kicker">LEARNING PATH · 64%</p><h3>Core operations</h3><p className="vocab-subtitle">Three fictional cards prepared for this portfolio demo.</p><div className="vocab-learning-list">{terms.map(([term, definition], index) => <article key={term}><span>0{index + 1}</span><div><strong>{term}</strong><p>{definition}</p></div><Check /></article>)}</div></div>;
+}
+
+function VocabPlay() {
+  return <div className="vocab-view vocab-game"><p className="vocab-kicker">QUICK MATCH · DEMO ROUND</p><div className="vocab-score"><Trophy /><span>Sample score</span><strong>480</strong></div><h3>Match the meaning</h3><p>Which term describes stock available to fulfil new orders?</p><div className="vocab-answers"><Button type="button" variant="outline">Dunning</Button><Button type="button" className="is-answer">Available-to-Promise <Check /></Button><Button type="button" variant="outline">Intercompany</Button></div><small>Example answer is highlighted for demo purposes.</small></div>;
+}
+
+function VocabBot({ question, onQuestion }: { question: 1 | 2 | null; onQuestion: (value: 1 | 2) => void }) {
+  return <div className="vocab-view vocab-bot"><div className="vocab-bot-heading"><span><Bot /></span><div><p className="vocab-kicker">SCRIPTED ASSISTANT</p><h3>VocabBot</h3></div></div><p className="vocab-subtitle">Choose one of two demo questions. Free typing is intentionally unavailable.</p><div className="vocab-chat" aria-live="polite">
+    {question ? <><div className="vocab-user-message">{question === 1 ? "Explain about the app" : "How do I download it?"}</div><div className="vocab-bot-message">{question === 1 ? <>VocabPro bridges terminology gaps across Order Management, AR, AP, Pricing, and Master Data. It helps cross-functional teams reduce communication errors and accelerate onboarding through shared definitions, learning, games, and guided support.<br /><br />Download the real app to continue learning with VocabPro.</> : <>Use the Get VocabPro button beside this demo to open the public app. From there, follow the available installation or access guidance for your device.</>}</div></> : <div className="vocab-bot-empty"><Bot /><span>What would you like to know?</span></div>}
+  </div><div className="vocab-question-options"><Button type="button" variant="outline" onClick={() => onQuestion(1)}>Explain about the app</Button><Button type="button" variant="outline" onClick={() => onQuestion(2)}>How do I download it?</Button></div></div>;
 }
 
 function AutomationPipeline() {
@@ -449,7 +538,7 @@ function Portfolio() {
               {[["01", "Home"], ["02", "Teams"], ["03", "Learn"], ["04", "Play — gamified vocabulary learning"], ["05", "VocabBot — in-app chatbot"]].map(([num, text]) => <li key={num}><span>{num}</span>{text}</li>)}
             </ul>
             <p className="built-line">Built no-code, shipped to the org, used daily by cross-functional teams.</p>
-             <Button asChild variant="outline"><a href={vocabProUrl} target="_blank" rel="noreferrer"><ExternalLink /> Launch full app</a></Button>
+             <Button asChild variant="outline"><a href={vocabProUrl} target="_blank" rel="noreferrer"><ExternalLink /> Get VocabPro</a></Button>
           </div>
           <VocabProPreview />
         </div>

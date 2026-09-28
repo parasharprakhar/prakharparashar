@@ -14,3 +14,4 @@
 - Keep the recruiter portfolio as one anchor-navigated page at `/`; its narrative is designed as a single operating record.
 - Store public contact messages in `contact_submissions` with insert-only anonymous access; messages must never be publicly readable.
 - Keep motion progressive and accessible: viewport effects run once and resolve immediately when reduced motion is preferred.
+- Keep the embedded VocabPro experience as a client-only scripted sandbox with fictional data and no authentication or backend calls.
