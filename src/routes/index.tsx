@@ -194,7 +194,8 @@ function ContactForm() {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const parsed = contactSchema.safeParse({
       name: form.get("name"), email: form.get("email"), message: form.get("message"),
     });
@@ -224,7 +225,7 @@ function ContactForm() {
       setError("Your message could not be sent. Please email Prakhar directly.");
       return;
     }
-    event.currentTarget.reset();
+    formElement.reset();
     setStatus("sent");
   }
 
