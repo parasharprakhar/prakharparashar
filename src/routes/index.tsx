@@ -5,19 +5,22 @@ import {
   Check,
   Download,
   ExternalLink,
+  Github,
   Linkedin,
   Mail,
   Moon,
+  Plus,
   Send,
   Sun,
 } from "lucide-react";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import vocabProPreview from "@/assets/vocabpro-live-preview.png.asset.json";
 
 const description =
   "Senior operations and digital transformation leader specializing in RPA, intelligent automation, SAP S/4HANA, and Order-to-Cash transformation.";
@@ -78,6 +81,39 @@ const achievements = [
     detail: "Post-migration issues cleared within 3 days",
   },
 ];
+
+const programmes = [
+  {
+    title: "Part Convergence Project",
+    summary: "Resolved a systemic SAP/customer part-name mismatch causing chronic shipment errors.",
+    details: [
+      ["Problem", "A systemic mismatch between SAP and customer part names was causing chronic shipment errors."],
+      ["Response", "Led the Part Convergence Project to resolve the underlying naming mismatch."],
+      ["Result", "Resolved the systemic cause of the shipment errors."],
+    ],
+  },
+  {
+    title: "Cybersecurity & Customer Service Training",
+    summary: "Designed and delivered to 53 GBTS-OM staff, establishing first-line phishing defence.",
+    details: [
+      ["Problem", "Customer service teams needed stronger first-line awareness of phishing risk."],
+      ["Response", "Designed and delivered a cybersecurity and customer service training programme to 53 GBTS-OM staff."],
+      ["Result", "Established a first-line phishing defence across the trained team."],
+    ],
+  },
+  {
+    title: "EDI Failure Root Cause Analysis",
+    summary: "Delivered a permanent process fix with zero repeat occurrences.",
+    details: [
+      ["Problem", "EDI failures required a root-cause response rather than another temporary correction."],
+      ["Response", "Conducted root cause analysis and implemented a permanent process fix."],
+      ["Result", "Zero repeat occurrences."],
+    ],
+  },
+];
+
+const vocabProUrl = "https://web-builder-buddy-184.lovable.app";
+const resumeUrl = "https://prakharparashar.lovable.app/assets/Prakhar_Parashar_CV-_plRxiEH.docx";
 
 const skills = [
   ["Automation & RPA", "Blue Prism (Business SME)", "RPA Programme Management", "Process Discovery", "Intelligent Automation Design"],
@@ -147,8 +183,64 @@ function SectionHeading({ number, title, summary }: { number: string; title: str
   );
 }
 
+function useInView<T extends HTMLElement>(options?: IntersectionObserverInit) {
+  const ref = useRef<T>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        setVisible(true);
+        observer.disconnect();
+      }
+    }, options ?? { threshold: 0.16 });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+  return { ref, visible };
+}
+
+function MetricValue({ value }: { value: string }) {
+  const { ref, visible } = useInView<HTMLElement>();
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    if (!visible) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setProgress(1);
+      return;
+    }
+    const started = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      const linear = Math.min((now - started) / 1250, 1);
+      setProgress(1 - Math.pow(1 - linear, 3));
+      if (linear < 1) frame = window.requestAnimationFrame(tick);
+    };
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [visible]);
+  const decimals = value.includes(".") ? 1 : 0;
+  const display = value.replace(/\d[\d,.]*/g, (match) => {
+    const target = Number(match.replaceAll(",", ""));
+    const current = target * progress;
+    if (match.includes(",")) return Math.round(current).toLocaleString("en-US");
+    return current.toFixed(decimals);
+  });
+  return <strong ref={ref}>{display}</strong>;
+}
+
+function Reveal({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const { ref, visible } = useInView<HTMLDivElement>();
+  return <div ref={ref} className={`reveal ${visible ? "is-visible" : ""} ${className}`} style={{ "--reveal-delay": `${delay}ms` } as React.CSSProperties}>{children}</div>;
+}
+
 function VocabProPreview() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLAnchorElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -165,20 +257,41 @@ function VocabProPreview() {
   }, []);
 
   return (
-    <div ref={ref} className="device-shell" aria-label="VocabPro live preview">
+    <a ref={ref} className="device-shell vocab-live-link" href={vocabProUrl} target="_blank" rel="noreferrer" aria-label="Open the live VocabPro app in a new tab">
       <div className="device-bar"><span /><span>VOCABPRO / LIVE PRODUCT</span><span /></div>
       <div className="device-screen">
         {visible ? (
-          <div className="preview-placeholder">
-            <div className="preview-mark">VP</div>
-            <p className="eyebrow">LIVE PREVIEW READY</p>
-            <h3>VocabPro</h3>
-            <p>Public app URL required to activate this secure embed.</p>
-          </div>
+          <img src={vocabProPreview.url} alt="VocabPro live app home screen" loading="lazy" />
         ) : <span className="text-sm text-muted-foreground">Loading preview…</span>}
+        <span className="vocab-open-cue"><ExternalLink /> Open live app</span>
+      </div>
+    </a>
+  );
+}
+
+function AutomationPipeline() {
+  const { ref, visible } = useInView<HTMLDivElement>({ threshold: 0.35 });
+  return (
+    <div ref={ref} className={`automation-pipeline ${visible ? "is-running" : ""}`}>
+      <div className="pipeline-heading"><div><p className="eyebrow">BLUE PRISM / DELIVERY RECORD</p><h3>Seven initiatives. Seven on-time go-lives.</h3></div><span>ZERO REWORK</span></div>
+      <div className="pipeline-track" aria-label="Seven Blue Prism initiatives delivered">
+        {Array.from({ length: 7 }, (_, index) => <div className="pipeline-node" style={{ "--node-index": index } as React.CSSProperties} key={index}><i /><span>0{index + 1}</span><small>GO-LIVE</small></div>)}
       </div>
     </div>
   );
+}
+
+function ProgrammeList() {
+  const [open, setOpen] = useState<number | null>(null);
+  return <div className="project-list">{programmes.map((programme, index) => {
+    const expanded = open === index;
+    return <article className={expanded ? "is-open" : ""} key={programme.title}>
+      <button type="button" onClick={() => setOpen(expanded ? null : index)} aria-expanded={expanded} aria-controls={`programme-${index}`}>
+        <span>0{index + 1}</span><div><h3>{programme.title}</h3><p>{programme.summary}</p></div><Plus />
+      </button>
+      <div id={`programme-${index}`} className="programme-detail" hidden={!expanded}>{programme.details.map(([label, text]) => <div key={label}><span>{label}</span><p>{text}</p></div>)}</div>
+    </article>;
+  })}</div>;
 }
 
 const contactSchema = z.object({
@@ -211,16 +324,18 @@ function ContactForm() {
       setError("Your message could not be sent. Please email Prakhar directly.");
       return;
     }
-    const response = await fetch(`${cloudUrl}/rest/v1/contact_submissions`, {
-      method: "POST",
-      headers: {
-        apikey: publishableKey,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify(parsed.data),
-    });
-    if (!response.ok) {
+    try {
+      const response = await fetch(`${cloudUrl}/rest/v1/contact_submissions`, {
+        method: "POST",
+        headers: {
+          apikey: publishableKey,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify(parsed.data),
+      });
+      if (!response.ok) throw new Error("Contact submission failed");
+    } catch {
       setStatus("error");
       setError("Your message could not be sent. Please email Prakhar directly.");
       return;
@@ -244,6 +359,19 @@ function ContactForm() {
 }
 
 function Portfolio() {
+  const heroRef = useRef<HTMLElement>(null);
+  function moveHero(event: MouseEvent<HTMLElement>) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    event.currentTarget.style.setProperty("--hero-x", `${x * 10}px`);
+    event.currentTarget.style.setProperty("--hero-y", `${y * 8}px`);
+  }
+  function resetHero() {
+    heroRef.current?.style.setProperty("--hero-x", "0px");
+    heroRef.current?.style.setProperty("--hero-y", "0px");
+  }
   return (
     <main>
       <header className="site-header">
@@ -254,7 +382,7 @@ function Portfolio() {
         <ThemeToggle />
       </header>
 
-      <section id="top" className="hero">
+       <section ref={heroRef} id="top" className="hero" onMouseMove={moveHero} onMouseLeave={resetHero}>
         <div className="hero-rule"><span>OPERATING RECORD / 2026</span><span>BENGALURU, INDIA</span></div>
         <div className="hero-copy">
           <p className="eyebrow">OPERATIONS × AUTOMATION × TRANSFORMATION</p>
@@ -262,7 +390,7 @@ function Portfolio() {
           <p className="hero-title">Senior Operations & Digital Transformation Leader <span>|</span> RPA Programme Lead <span>|</span> GBTS Automation Ambassador</p>
           <p className="hero-positioning">13+ years in international, abroad-facing operations and customer service — with deep RPA, automation, and Order-to-Cash transformation expertise built at Mann+Hummel.</p>
           <div className="hero-actions">
-            <Button asChild size="lg"><a href="#" aria-label="Download resume placeholder"><Download /> Download Resume</a></Button>
+             <Button asChild size="lg"><a href={resumeUrl} target="_blank" rel="noreferrer" aria-label="Download Prakhar Parashar’s resume"><Download /> Download Resume</a></Button>
             <Button asChild size="lg" variant="outline"><a href="#contact">Contact Me <ArrowDown /></a></Button>
           </div>
         </div>
@@ -274,7 +402,7 @@ function Portfolio() {
       </section>
 
       <section id="record" className="section-shell">
-        <SectionHeading number="01" title="Operating mandate" summary="Two career threads. One transformation mandate." />
+         <Reveal><SectionHeading number="01" title="Operating mandate" summary="Two career threads. One transformation mandate." /></Reveal>
         <div className="narrative-grid">
           <div className="career-thread">
             <p className="eyebrow">CURRENT SCOPE</p>
@@ -303,14 +431,15 @@ function Portfolio() {
       </section>
 
       <section className="section-shell section-tinted">
-        <SectionHeading number="02" title="Impact, measured" summary="Transformation outcomes, not activity counts." />
+         <Reveal><SectionHeading number="02" title="Impact, measured" summary="Transformation outcomes, not activity counts." /></Reveal>
         <div className="metrics-grid">
-          {achievements.map((item, index) => <article key={item.metric + item.label} className={index < 2 ? "metric-featured" : ""}><strong>{item.metric}</strong><h3>{item.label}</h3><p>{item.detail}</p></article>)}
+           {achievements.map((item, index) => <Reveal key={item.metric + item.label} delay={(index % 4) * 80} className={index < 2 ? "metric-featured" : ""}><article><MetricValue value={item.metric} /><h3>{item.label}</h3><p>{item.detail}</p></article></Reveal>)}
         </div>
+         <AutomationPipeline />
       </section>
 
       <section id="work" className="section-shell vocab-section">
-        <SectionHeading number="03" title="Product proof" summary="A working solution designed around a real operating constraint." />
+         <Reveal><SectionHeading number="03" title="Product proof" summary="A working solution designed around a real operating constraint." /></Reveal>
         <div className="vocab-grid">
           <div className="vocab-copy">
             <p className="eyebrow">FEATURED / GENERATIVE AI</p>
@@ -320,30 +449,26 @@ function Portfolio() {
               {[["01", "Home"], ["02", "Teams"], ["03", "Learn"], ["04", "Play — gamified vocabulary learning"], ["05", "VocabBot — in-app chatbot"]].map(([num, text]) => <li key={num}><span>{num}</span>{text}</li>)}
             </ul>
             <p className="built-line">Built no-code, shipped to the org, used daily by cross-functional teams.</p>
-            <Button variant="outline" disabled title="Add the verified public VocabPro URL to activate"><ExternalLink /> Launch full app</Button>
+             <Button asChild variant="outline"><a href={vocabProUrl} target="_blank" rel="noreferrer"><ExternalLink /> Launch full app</a></Button>
           </div>
           <VocabProPreview />
         </div>
       </section>
 
       <section className="section-shell compact-section">
-        <SectionHeading number="04" title="Selected programmes" />
-        <div className="project-list">
-          <article><span>01</span><div><h3>Part Convergence Project</h3><p>Resolved a systemic SAP/customer part-name mismatch causing chronic shipment errors.</p></div><ArrowUpRight /></article>
-          <article><span>02</span><div><h3>Cybersecurity & Customer Service Training</h3><p>Designed and delivered to 53 GBTS-OM staff, establishing first-line phishing defence.</p></div><ArrowUpRight /></article>
-          <article><span>03</span><div><h3>EDI Failure Root Cause Analysis</h3><p>Delivered a permanent process fix with zero repeat occurrences.</p></div><ArrowUpRight /></article>
-        </div>
+         <Reveal><SectionHeading number="04" title="Selected programmes" /></Reveal>
+         <ProgrammeList />
       </section>
 
       <section id="capabilities" className="section-shell section-tinted">
-        <SectionHeading number="05" title="Capability system" summary="The disciplines required to move from operating problem to adopted solution." />
+         <Reveal><SectionHeading number="05" title="Capability system" summary="The disciplines required to move from operating problem to adopted solution." /></Reveal>
         <div className="skills-grid">
-          {skills.map(([title, ...items], index) => <article key={title}><span>0{index + 1}</span><h3>{title}</h3><ul>{items.map(item => <li key={item}>{item}</li>)}</ul></article>)}
+           {skills.map(([title, ...items], index) => <Reveal key={title} delay={index * 70}><article><span>0{index + 1}</span><h3>{title}</h3><ul>{items.map(item => <li key={item}>{item}</li>)}</ul></article></Reveal>)}
         </div>
       </section>
 
       <section className="section-shell credentials-section">
-        <SectionHeading number="06" title="Credentials & recognition" />
+         <Reveal><SectionHeading number="06" title="Credentials & recognition" /></Reveal>
         <div className="credentials-grid">
           <div><p className="eyebrow">CERTIFICATIONS / 12</p>{certifications.map(([name, issuer]) => <article key={name}><h3>{name}</h3><p>{issuer}</p></article>)}</div>
           <div><p className="eyebrow">AWARDS / 5</p>{awards.map(([name, issuer]) => <article key={name}><h3>{name}</h3><p>{issuer}</p></article>)}</div>
@@ -356,8 +481,9 @@ function Portfolio() {
           <h2>Let’s move the<br />operation forward.</h2>
           <p>Open to conversations about Automation Manager, RPA Program Lead, and IC Automation Consultant opportunities.</p>
           <div className="contact-links">
-            <a href="mailto:prakharparashar.ai@gmail.com"><Mail /> prakharparashar.ai@gmail.com</a>
-            <span aria-disabled="true"><Linkedin /> LinkedIn profile forthcoming</span>
+             <a href="mailto:prakharparashar.ai@gmail.com"><Mail /> prakharparashar.ai@gmail.com</a>
+             <a href="https://www.linkedin.com/in/prakharparashar" target="_blank" rel="noreferrer"><Linkedin /> LinkedIn <ExternalLink /></a>
+             <a href="https://github.com/parasharprakhar" target="_blank" rel="noreferrer"><Github /> GitHub <ExternalLink /></a>
           </div>
         </div>
         <ContactForm />
