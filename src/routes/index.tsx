@@ -239,7 +239,7 @@ function Reveal({ children, className = "", delay = 0 }: { children: React.React
 }
 
 function VocabProPreview() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLAnchorElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -256,7 +256,7 @@ function VocabProPreview() {
   }, []);
 
   return (
-    <a ref={ref as React.RefObject<HTMLAnchorElement>} className="device-shell vocab-live-link" href={vocabProUrl} target="_blank" rel="noreferrer" aria-label="Open the live VocabPro app in a new tab">
+    <a ref={ref} className="device-shell vocab-live-link" href={vocabProUrl} target="_blank" rel="noreferrer" aria-label="Open the live VocabPro app in a new tab">
       <div className="device-bar"><span /><span>VOCABPRO / LIVE PRODUCT</span><span /></div>
       <div className="device-screen">
         {visible ? (
@@ -323,16 +323,18 @@ function ContactForm() {
       setError("Your message could not be sent. Please email Prakhar directly.");
       return;
     }
-    const response = await fetch(`${cloudUrl}/rest/v1/contact_submissions`, {
-      method: "POST",
-      headers: {
-        apikey: publishableKey,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify(parsed.data),
-    });
-    if (!response.ok) {
+    try {
+      const response = await fetch(`${cloudUrl}/rest/v1/contact_submissions`, {
+        method: "POST",
+        headers: {
+          apikey: publishableKey,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify(parsed.data),
+      });
+      if (!response.ok) throw new Error("Contact submission failed");
+    } catch {
       setStatus("error");
       setError("Your message could not be sent. Please email Prakhar directly.");
       return;
